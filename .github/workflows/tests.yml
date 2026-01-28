@@ -33,9 +33,14 @@ jobs:
 
       - name: Set up Supabase CLI
         uses: supabase/setup-cli@v1
+        with:
+          version: 'latest'
+
+      - name: Init local Supabase stack
+        run: supabase init
 
       - name: Start local Supabase stack
-        run: supabase start
+        run: supabase db start
 
       - name: Reset database (migrations + seed)
         run: supabase db reset

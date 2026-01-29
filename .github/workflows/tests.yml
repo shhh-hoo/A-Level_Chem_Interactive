@@ -34,18 +34,15 @@ jobs:
       - name: Set up Deno
         uses: denoland/setup-deno@v1
         with:
-          deno-version: v1.x
+          deno-version: 2.1.4
 
       - name: Set up Supabase CLI
         uses: supabase/setup-cli@v1
         with:
-          version: 'latest'
+          version: "latest"
 
-      - name: Init local Supabase stack
-        run: supabase init
-
-      - name: Start local Supabase stack
-        run: supabase db start
+      - name: Start local Supabase stack (full)
+        run: supabase start
 
       - name: Reset database (migrations + seed)
         run: supabase db reset
@@ -64,25 +61,5 @@ jobs:
             echo "No supabase/tests directory found; skipping pgTAP tests."
           fi
 
-      - name: Capture Supabase local credentials
-        id: supabase-creds
-        run: |
-          STATUS_JSON="$(supabase status -o json)"
-          STATUS_JSON="$STATUS_JSON" node -e "const s=JSON.parse(process.env.STATUS_JSON); const api=s.api_url ?? s.API_URL ?? s['API URL']; const service=s.service_role_key ?? s.SERVICE_ROLE_KEY ?? s['service_role key'] ?? s['service role key']; if(!api||!service){ throw new Error('Missing api/service role key in supabase status'); } console.log(`SUPABASE_URL=${api}`); console.log(`SUPABASE_SERVICE_ROLE_KEY=${service}`);" >> "$GITHUB_OUTPUT"
-
-      - name: Start edge functions
-        run: |
-          cat <<EOF > supabase/.env.edge
-          SUPABASE_URL=${{ steps.supabase-creds.outputs.SUPABASE_URL }}
-          SUPABASE_SERVICE_ROLE_KEY=${{ steps.supabase-creds.outputs.SUPABASE_SERVICE_ROLE_KEY }}
-          SERVER_SALT=edge-test-salt-${{ github.run_id }}
-          EOF
-          supabase functions serve --env-file supabase/.env.edge --no-verify-jwt > supabase/functions.log 2>&1 &
-          sleep 5
-
-      - name: Run edge function tests
-        env:
-          SUPABASE_URL: ${{ steps.supabase-creds.outputs.SUPABASE_URL }}
-          SUPABASE_SERVICE_ROLE_KEY: ${{ steps.supabase-creds.outputs.SUPABASE_SERVICE_ROLE_KEY }}
-          SUPABASE_FUNCTIONS_URL: ${{ steps.supabase-creds.outputs.SUPABASE_URL }}/functions/v1
-        run: deno test supabase/functions/tests/edge-functions.test.ts --allow-env --allow-net --allow-read
+      - name: Run Edge Functions tests
+        run: bash scripts/test-edge.sh

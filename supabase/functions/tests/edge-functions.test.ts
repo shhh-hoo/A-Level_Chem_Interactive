@@ -406,8 +406,10 @@ Deno.test('GET /teacher/report returns aggregates with valid teacher code', asyn
 
     assertEquals(activityTotals.has(firstActivityId), true);
     assertEquals(activityTotals.has(secondActivityId), true);
-    assert(activityTotals.get(firstActivityId) > 0);
-    assert(activityTotals.get(secondActivityId) > 0);
+    const firstTotal = activityTotals.get(firstActivityId);
+    assert(typeof firstTotal === 'number' && firstTotal > 0);
+    const secondTotal = activityTotals.get(secondActivityId);
+    assert(typeof secondTotal === 'number' && secondTotal > 0);
 
     const leaderboardEntries = reportPayload?.leaderboard ?? [];
     const leaderboardByName = new Map(

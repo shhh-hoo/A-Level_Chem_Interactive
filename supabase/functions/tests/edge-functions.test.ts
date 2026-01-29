@@ -15,25 +15,59 @@ type JoinResponse = {
   progress: Array<{ activity_id: string; state: Record<string, unknown> }>;
 };
 
-const supabaseUrl = Deno.env.get('SUPABASE_URL');
-const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
-const functionsBaseUrl = Deno.env.get('SUPABASE_FUNCTIONS_URL') ??
-  (supabaseUrl ? `${supabaseUrl}/functions/v1` : undefined);
+const rawSupabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
+const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
+const rawFunctionsUrl = Deno.env.get('SUPABASE_FUNCTIONS_URL') ?? '';
 
-if (!supabaseUrl || !serviceRoleKey || !functionsBaseUrl) {
-  throw new Error(
-    'Missing SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, or SUPABASE_FUNCTIONS_URL.',
-  );
-}
+const normalizeUrl = (value: string, label: string): string => {
+  const trimmed = value.trim().replace(/\/+$/, '');
+  if (!trimmed) {
+    return '';
+  }
 
-const supabase = createClient(supabaseUrl, serviceRoleKey, {
-  auth: {
-    autoRefreshToken: false,
-    persistSession: false,
-  },
-});
+  const withScheme = /^[a-zA-Z][a-zA-Z\d+\-.]*:\/\//.test(trimmed)
+    ? trimmed
+    : `http://${trimmed}`;
+
+  try {
+    const parsed = new URL(withScheme);
+    if (parsed.hostname.includes('...')) {
+      throw new Error('contains placeholder "..."');
+    }
+    return parsed.toString().replace(/\/+$/, '');
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    throw new Error(`${label} is not a valid URL: ${message}`);
+  }
+};
+
+const getEnvConfig = () => {
+  const supabaseUrl = normalizeUrl(rawSupabaseUrl, 'SUPABASE_URL');
+  const functionsBaseUrl =
+    normalizeUrl(rawFunctionsUrl, 'SUPABASE_FUNCTIONS_URL') ||
+    (supabaseUrl ? `${supabaseUrl}/functions/v1` : '');
+
+  if (!supabaseUrl || !serviceRoleKey || !functionsBaseUrl) {
+    throw new Error(
+      'Missing SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, or SUPABASE_FUNCTIONS_URL.',
+    );
+  }
+
+  return { supabaseUrl, functionsBaseUrl };
+};
+
+const getSupabaseClient = () => {
+  const { supabaseUrl } = getEnvConfig();
+  return createClient(supabaseUrl, serviceRoleKey, {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false,
+    },
+  });
+};
 
 async function createClass(classCode: string): Promise<void> {
+  const supabase = getSupabaseClient();
   const { error } = await supabase.from('classes').insert({
     class_code: classCode,
     name: 'Edge Function Test Class',
@@ -50,6 +84,7 @@ async function cleanupTestData(params: {
   studentId?: string;
   rateLimitIp: string;
 }): Promise<void> {
+  const supabase = getSupabaseClient();
   const { classCode, studentId, rateLimitIp } = params;
 
   if (studentId) {
@@ -68,6 +103,7 @@ async function joinSession(params: {
   displayName: string;
   rateLimitIp: string;
 }): Promise<JoinResponse> {
+  const { functionsBaseUrl } = getEnvConfig();
   const response = await fetch(`${functionsBaseUrl}/join`, {
     method: 'POST',
     headers: {
@@ -109,6 +145,7 @@ Deno.test('POST /join creates a session', async () => {
 
     studentId = payload.student_profile.id;
 
+    const supabase = getSupabaseClient();
     const { data: sessions, error } = await supabase
       .from('sessions')
       .select('student_id')
@@ -144,6 +181,7 @@ Deno.test('POST /save updates progress and updated_at', async () => {
 
     studentId = joinPayload.student_profile.id;
 
+    const { functionsBaseUrl } = getEnvConfig();
     const saveResponse = await fetch(`${functionsBaseUrl}/save`, {
       method: 'POST',
       headers: {
@@ -166,6 +204,7 @@ Deno.test('POST /save updates progress and updated_at', async () => {
     assertExists(savePayload.updated_at);
     assertEquals(savePayload.progress?.length, 1);
 
+    const supabase = getSupabaseClient();
     const { data: progressRows, error } = await supabase
       .from('progress')
       .select('activity_id, state, updated_at')

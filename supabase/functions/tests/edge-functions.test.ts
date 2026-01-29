@@ -145,6 +145,7 @@ Deno.test('POST /join creates a session', async () => {
 
     studentId = payload.student_profile.id;
 
+    const supabase = getSupabaseClient();
     const { data: sessions, error } = await supabase
       .from('sessions')
       .select('student_id')
@@ -180,6 +181,7 @@ Deno.test('POST /save updates progress and updated_at', async () => {
 
     studentId = joinPayload.student_profile.id;
 
+    const { functionsBaseUrl } = getEnvConfig();
     const saveResponse = await fetch(`${functionsBaseUrl}/save`, {
       method: 'POST',
       headers: {
@@ -202,6 +204,7 @@ Deno.test('POST /save updates progress and updated_at', async () => {
     assertExists(savePayload.updated_at);
     assertEquals(savePayload.progress?.length, 1);
 
+    const supabase = getSupabaseClient();
     const { data: progressRows, error } = await supabase
       .from('progress')
       .select('activity_id, state, updated_at')

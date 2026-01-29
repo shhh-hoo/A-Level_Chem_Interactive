@@ -4,6 +4,7 @@ import {
   assertEquals,
   assertExists,
 } from 'https://deno.land/std@0.224.0/assert/mod.ts';
+import { hashCode } from '../_shared/hash.ts';
 
 type JoinResponse = {
   session_token: string;
@@ -43,11 +44,14 @@ async function assertStatusAndDrain(resp: Response, expected: number) {
   assertEquals(resp.status, expected);
 }
 
-async function createClass(classCode: string): Promise<void> {
+async function createClass(
+  classCode: string,
+  teacherCodeHash = `hash_${crypto.randomUUID()}`,
+): Promise<void> {
   const { error } = await supabase.from('classes').insert({
     class_code: classCode,
     name: 'Edge Function Test Class',
-    teacher_code_hash: `hash_${crypto.randomUUID()}`,
+    teacher_code_hash: teacherCodeHash,
   });
 
   if (error) {
@@ -58,14 +62,19 @@ async function createClass(classCode: string): Promise<void> {
 async function cleanupTestData(params: {
   classCode: string;
   studentId?: string;
+  studentIds?: string[];
   rateLimitIp: string;
 }): Promise<void> {
-  const { classCode, studentId, rateLimitIp } = params;
+  const { classCode, studentId, studentIds, rateLimitIp } = params;
 
-  if (studentId) {
-    await supabase.from('progress').delete().eq('student_id', studentId);
-    await supabase.from('sessions').delete().eq('student_id', studentId);
-    await supabase.from('students').delete().eq('id', studentId);
+  const idsToCleanup = [studentId, ...(studentIds ?? [])].filter(
+    (id): id is string => Boolean(id),
+  );
+
+  for (const id of idsToCleanup) {
+    await supabase.from('progress').delete().eq('student_id', id);
+    await supabase.from('sessions').delete().eq('student_id', id);
+    await supabase.from('students').delete().eq('id', id);
   }
 
   await supabase.from('classes').delete().eq('class_code', classCode);
@@ -305,5 +314,141 @@ Deno.test('GET /load returns progress with optional since filter', async () => {
     await assertStatusAndDrain(invalidTokenResponse, 401);
   } finally {
     await cleanupTestData({ classCode, studentId, rateLimitIp });
+  }
+});
+
+Deno.test('GET /teacher/report returns aggregates with valid teacher code', async () => {
+  const classCode = `class_${crypto.randomUUID().slice(0, 8)}`;
+  const teacherCode = `teach_${crypto.randomUUID().slice(0, 8)}`;
+  const teacherCodeHash = await hashCode(teacherCode, classCode);
+  const firstStudentCode = `student_${crypto.randomUUID().slice(0, 8)}`;
+  const secondStudentCode = `student_${crypto.randomUUID().slice(0, 8)}`;
+  const firstDisplayName = 'Edge Learner One';
+  const secondDisplayName = 'Edge Learner Two';
+  const firstRateLimitIp = `203.0.113.${Math.floor(Math.random() * 200) + 1}`;
+  const secondRateLimitIp = `198.51.100.${Math.floor(Math.random() * 200) + 1}`;
+  const firstActivityId = `activity_${crypto.randomUUID().slice(0, 8)}`;
+  const secondActivityId = `activity_${crypto.randomUUID().slice(0, 8)}`;
+  const studentIds: string[] = [];
+
+  try {
+    await createClass(classCode, teacherCodeHash);
+
+    const firstJoin = await joinSession({
+      classCode,
+      studentCode: firstStudentCode,
+      displayName: firstDisplayName,
+      rateLimitIp: firstRateLimitIp,
+    });
+    const secondJoin = await joinSession({
+      classCode,
+      studentCode: secondStudentCode,
+      displayName: secondDisplayName,
+      rateLimitIp: secondRateLimitIp,
+    });
+
+    studentIds.push(firstJoin.student_profile.id, secondJoin.student_profile.id);
+
+    const firstSaveResponse = await fetch(`${functionsBaseUrl}/save`, {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        authorization: `Bearer ${firstJoin.session_token}`,
+      },
+      body: JSON.stringify({
+        updates: [
+          {
+            activity_id: firstActivityId,
+            state: { progress: 0.4 },
+          },
+        ],
+      }),
+    });
+    assertEquals(firstSaveResponse.status, 200);
+
+    const secondSaveResponse = await fetch(`${functionsBaseUrl}/save`, {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        authorization: `Bearer ${secondJoin.session_token}`,
+      },
+      body: JSON.stringify({
+        updates: [
+          {
+            activity_id: secondActivityId,
+            state: { progress: 0.9 },
+          },
+        ],
+      }),
+    });
+    assertEquals(secondSaveResponse.status, 200);
+
+    const reportResponse = await fetch(
+      `${functionsBaseUrl}/teacher/report?class_code=${encodeURIComponent(
+        classCode,
+      )}&teacher_code=${encodeURIComponent(teacherCode)}`,
+      { method: 'GET' },
+    );
+
+    assertEquals(reportResponse.status, 200);
+    const reportPayload = await readJson(reportResponse);
+
+    assertEquals(reportPayload?.totals?.students, 2);
+
+    const activityTotals = new Map(
+      (reportPayload?.activities ?? []).map(
+        (activity: { activity_id: string; total: number }) => [
+          activity.activity_id,
+          activity.total,
+        ],
+      ),
+    );
+
+    assertEquals(activityTotals.has(firstActivityId), true);
+    assertEquals(activityTotals.has(secondActivityId), true);
+    assert(activityTotals.get(firstActivityId) > 0);
+    assert(activityTotals.get(secondActivityId) > 0);
+
+    const leaderboardEntries = reportPayload?.leaderboard ?? [];
+    const leaderboardByName = new Map(
+      leaderboardEntries.map(
+        (entry: { display_name: string; completed: number }) => [
+          entry.display_name,
+          entry.completed,
+        ],
+      ),
+    );
+
+    assertEquals(leaderboardByName.get(firstDisplayName), 1);
+    assertEquals(leaderboardByName.get(secondDisplayName), 1);
+  } finally {
+    await cleanupTestData({
+      classCode,
+      studentIds,
+      rateLimitIp: firstRateLimitIp,
+    });
+    await supabase.from('rate_limits').delete().eq('ip', secondRateLimitIp);
+  }
+});
+
+Deno.test('GET /teacher/report returns 403 for invalid teacher code', async () => {
+  const classCode = `class_${crypto.randomUUID().slice(0, 8)}`;
+  const teacherCode = `teach_${crypto.randomUUID().slice(0, 8)}`;
+  const teacherCodeHash = await hashCode(teacherCode, classCode);
+  const rateLimitIp = `203.0.113.${Math.floor(Math.random() * 200) + 1}`;
+
+  try {
+    await createClass(classCode, teacherCodeHash);
+
+    const reportResponse = await fetch(
+      `${functionsBaseUrl}/teacher/report?class_code=${encodeURIComponent(
+        classCode,
+      )}&teacher_code=invalid-code`,
+      { method: 'GET' },
+    );
+
+    await assertStatusAndDrain(reportResponse, 403);
+  } finally {
+    await cleanupTestData({ classCode, rateLimitIp });
   }
 });

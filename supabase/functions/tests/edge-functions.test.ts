@@ -33,6 +33,16 @@ const supabase = createClient(supabaseUrl, serviceRoleKey, {
   },
 });
 
+async function readJson(resp: Response) {
+  const raw = await resp.text();
+  return raw ? JSON.parse(raw) : null;
+}
+
+async function assertStatusAndDrain(resp: Response, expected: number) {
+  await resp.text();
+  assertEquals(resp.status, expected);
+}
+
 async function createClass(classCode: string): Promise<void> {
   const { error } = await supabase.from('classes').insert({
     class_code: classCode,
@@ -257,9 +267,9 @@ Deno.test('GET /load returns progress with optional since filter', async () => {
     });
 
     assertEquals(loadResponse.status, 200);
-    const loadPayload = await loadResponse.json();
+    const loadPayload = await readJson(loadResponse);
 
-    const activityIds = loadPayload.progress.map((item: { activity_id: string }) =>
+    const activityIds = loadPayload?.progress.map((item: { activity_id: string }) =>
       item.activity_id
     );
     assertEquals(new Set(activityIds), new Set([firstActivityId, secondActivityId]));
@@ -275,15 +285,15 @@ Deno.test('GET /load returns progress with optional since filter', async () => {
     );
 
     assertEquals(sinceResponse.status, 200);
-    const sincePayload = await sinceResponse.json();
-    assertEquals(sincePayload.progress?.length, 1);
-    assertEquals(sincePayload.progress?.[0]?.activity_id, secondActivityId);
+    const sincePayload = await readJson(sinceResponse);
+    assertEquals(sincePayload?.progress?.length, 1);
+    assertEquals(sincePayload?.progress?.[0]?.activity_id, secondActivityId);
 
     const missingTokenResponse = await fetch(`${functionsBaseUrl}/load`, {
       method: 'GET',
     });
 
-    assertEquals(missingTokenResponse.status, 401);
+    await assertStatusAndDrain(missingTokenResponse, 401);
 
     const invalidTokenResponse = await fetch(`${functionsBaseUrl}/load`, {
       method: 'GET',
@@ -292,7 +302,7 @@ Deno.test('GET /load returns progress with optional since filter', async () => {
       },
     });
 
-    assertEquals(invalidTokenResponse.status, 401);
+    await assertStatusAndDrain(invalidTokenResponse, 401);
   } finally {
     await cleanupTestData({ classCode, studentId, rateLimitIp });
   }

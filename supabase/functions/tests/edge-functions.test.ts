@@ -219,7 +219,7 @@ Deno.test('POST /save updates progress and updated_at', async () => {
     assertExists(progressRows);
     assertEquals(progressRows.activity_id, activityId);
     assertEquals(progressRows.state, { progress: 0.7 });
-    assertEquals(progressRows.updated_at, savePayload.updated_at);
+    assertEquals(new Date(progressRows.updated_at).getTime(), new Date(savePayload.updated_at).getTime());
   } finally {
     await cleanupTestData({ classCode, studentId, rateLimitIp });
   }

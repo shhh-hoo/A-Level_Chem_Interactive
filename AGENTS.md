@@ -9,3 +9,4 @@
 - Set up or update tests before implementing new behavior (test-driven workflow).
 - Add detailed comments for non-trivial logic in new or refactored code.
 - Keep each commit focused on a single functional change.
+- After finishing work, update relevant documentation to reflect the changes.

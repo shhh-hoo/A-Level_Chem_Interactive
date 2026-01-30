@@ -2,12 +2,14 @@ import { z } from 'zod';
 import { joinPayloadSchema } from '../validators/join';
 import { teacherLoginSchema } from '../validators/teacher';
 
+// Base URL for edge functions; defaults to same-origin for local dev.
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? '';
 
 export async function getJson<TResponse>(
   path: string,
   options?: Omit<RequestInit, 'method'>,
 ): Promise<TResponse> {
+  // Placeholder implementation to keep UI wiring intact before backend integration.
   void options;
   void path;
   void API_BASE_URL;
@@ -19,6 +21,7 @@ export async function postJson<TResponse, TBody>(
   body: TBody,
   options?: Omit<RequestInit, 'method' | 'body'>,
 ): Promise<TResponse> {
+  // Placeholder implementation to keep UI wiring intact before backend integration.
   void options;
   void path;
   void body;

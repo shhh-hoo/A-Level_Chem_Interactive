@@ -63,11 +63,12 @@ function showReaction(link) {
         const originalSpeed = 0.02;
         const burstSpeed = 0.1;
 
-        // Temporarily increase particle density and speed
+        // Temporarily increase particle density and speed to emphasize the selected pathway.
         Graph.linkDirectionalParticles(l => (l === highlightLink ? 8 : (l.type === 'structure' ? 0 : 2)));
         Graph.linkDirectionalParticleSpeed(l => (l === highlightLink ? burstSpeed : 0.002));
 
         setTimeout(() => {
+            // Reset to baseline values so highlight animations don't stack after repeated clicks.
             Graph.linkDirectionalParticles(l => (l.type === 'structure' ? 0 : 2)); // Reset density
             Graph.linkDirectionalParticleSpeed(l => (l === highlightLink ? originalSpeed : 0.002)); // Reset speed
         }, 1500);
@@ -180,6 +181,7 @@ window.addEventListener('load', () => {
         // Interaction
         .onNodeClick(node => {
             const distance = 40;
+            // Calculate a consistent camera offset so we fly toward the node without clipping it.
             const distRatio = 1 + distance / Math.hypot(node.x, node.y, node.z);
 
             Graph.cameraPosition(

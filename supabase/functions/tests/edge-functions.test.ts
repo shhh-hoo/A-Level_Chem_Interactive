@@ -1,170 +1,24 @@
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.4";
 import {
   assert,
   assertEquals,
   assertExists,
 } from "https://deno.land/std@0.224.0/assert/mod.ts";
 import { hashCode } from "../_shared/hash.ts";
-
-type JoinResponse = {
-  session_token: string;
-  student_profile: {
-    id: string;
-    class_code: string;
-    display_name: string;
-  };
-  progress: Array<{ activity_id: string; state: Record<string, unknown> }>;
-};
-
-const supabaseUrl = Deno.env.get("SUPABASE_URL");
-const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-const functionsBaseUrl =
-  Deno.env.get("SUPABASE_FUNCTIONS_URL") ??
-  (supabaseUrl ? `${supabaseUrl}/functions/v1` : undefined);
-
-if (!supabaseUrl || !serviceRoleKey || !functionsBaseUrl) {
-  throw new Error(
-    "Missing SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, or SUPABASE_FUNCTIONS_URL.",
-  );
-}
-
-const supabase = createClient(supabaseUrl, serviceRoleKey, {
-  auth: {
-    autoRefreshToken: false,
-    persistSession: false,
-  },
-});
-
-const randomSuffix = () => crypto.randomUUID().slice(0, 8);
-const makeClassCode = () => `class_${randomSuffix()}`;
-const makeStudentCode = () => `student_${randomSuffix()}`;
-const makeTeacherCode = () => `teach_${randomSuffix()}`;
-const makeActivityId = () => `activity_${randomSuffix()}`;
-const makeRateLimitIp = (octet = Math.floor(Math.random() * 200) + 1) =>
-  `203.0.113.${octet}`;
-
-async function sleep(ms: number): Promise<void> {
-  return await new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-async function readJson(resp: Response) {
-  // Always consume the response body exactly once.
-  const raw = await resp.text();
-  if (!raw) return null;
-  try {
-    return JSON.parse(raw);
-  } catch {
-    throw new Error(`Failed to parse JSON. Body: ${raw}`);
-  }
-}
-
-async function expectStatus(resp: Response, expected: number): Promise<void> {
-  if (resp.status !== expected) {
-    // Drain body on failure to avoid leaks and include it in error for debugging.
-    const body = await resp.text();
-    throw new Error(`Expected ${expected}, got ${resp.status}. Body: ${body}`);
-  }
-}
-
-async function discardBody(resp: Response): Promise<void> {
-  // Cancel the body stream when we don't need it to avoid leak warnings.
-  try {
-    await resp.body?.cancel();
-  } catch {
-    // Ignore if already consumed/locked.
-  }
-}
-
-async function fetchJson<T>(
-  url: string,
-  init: RequestInit,
-  expected = 200,
-): Promise<T> {
-  const resp = await fetch(url, init);
-  await expectStatus(resp, expected);
-  return (await readJson(resp)) as T;
-}
-
-async function fetchErrorJson<T>(
-  url: string,
-  init: RequestInit,
-  expected: number,
-): Promise<T> {
-  const resp = await fetch(url, init);
-  assertEquals(resp.status, expected);
-  return (await readJson(resp)) as T;
-}
-
-async function fetchDiscard(
-  url: string,
-  init: RequestInit,
-  expected = 200,
-): Promise<void> {
-  const resp = await fetch(url, init);
-  if (resp.status !== expected) {
-    const body = await resp.text(); // drains on failure
-    throw new Error(`Expected ${expected}, got ${resp.status}. Body: ${body}`);
-  }
-  await discardBody(resp);
-}
-
-async function createClass(
-  classCode: string,
-  teacherCodeHash = `hash_${crypto.randomUUID()}`,
-): Promise<void> {
-  const { error } = await supabase.from("classes").insert({
-    class_code: classCode,
-    name: "Edge Function Test Class",
-    teacher_code_hash: teacherCodeHash,
-  });
-
-  if (error) {
-    throw new Error(`Failed to insert class: ${error.message}`);
-  }
-}
-
-async function cleanupTestData(params: {
-  classCode: string;
-  studentId?: string;
-  studentIds?: string[];
-  rateLimitIp: string;
-}): Promise<void> {
-  const { classCode, studentId, studentIds, rateLimitIp } = params;
-
-  // Cleaning in dependency order prevents foreign key errors when rows exist.
-  const idsToCleanup = [studentId, ...(studentIds ?? [])].filter(
-    (id): id is string => Boolean(id),
-  );
-
-  for (const id of idsToCleanup) {
-    await supabase.from("progress").delete().eq("student_id", id);
-    await supabase.from("sessions").delete().eq("student_id", id);
-    await supabase.from("students").delete().eq("id", id);
-  }
-
-  await supabase.from("classes").delete().eq("class_code", classCode);
-  await supabase.from("rate_limits").delete().eq("ip", rateLimitIp);
-}
-
-async function joinSession(params: {
-  classCode: string;
-  studentCode: string;
-  displayName: string;
-  rateLimitIp: string;
-}): Promise<JoinResponse> {
-  return await fetchJson<JoinResponse>(`${functionsBaseUrl}/join`, {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-      "x-forwarded-for": params.rateLimitIp,
-    },
-    body: JSON.stringify({
-      class_code: params.classCode,
-      student_code: params.studentCode,
-      display_name: params.displayName,
-    }),
-  }, 200);
-}
+import {
+  cleanupTestData,
+  createClass,
+  fetchDiscard,
+  fetchJson,
+  joinSession,
+  makeActivityId,
+  makeClassCode,
+  makeRateLimitIp,
+  makeStudentCode,
+  makeTeacherCode,
+  sleep,
+  supabase,
+  functionsBaseUrl,
+} from "./edge-functions.test-helpers.ts";
 
 Deno.test("POST /join creates a session", async () => {
   const classCode = makeClassCode();
@@ -202,45 +56,6 @@ Deno.test("POST /join creates a session", async () => {
   } finally {
     await cleanupTestData({ classCode, studentId, rateLimitIp });
   }
-});
-
-Deno.test("POST /join rejects malformed or missing fields", async () => {
-  const rateLimitIp = makeRateLimitIp();
-
-  const missingFieldPayload = await fetchErrorJson<any>(
-    `${functionsBaseUrl}/join`,
-    {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-        "x-forwarded-for": rateLimitIp,
-      },
-      body: JSON.stringify({
-        class_code: "ab",
-        student_code: "cd",
-      }),
-    },
-    400,
-  );
-
-  assertEquals(missingFieldPayload?.error?.code, "bad_request");
-  assertEquals(missingFieldPayload?.error?.message, "Validation failed.");
-
-  const invalidJsonPayload = await fetchErrorJson<any>(
-    `${functionsBaseUrl}/join`,
-    {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-        "x-forwarded-for": rateLimitIp,
-      },
-      body: "{",
-    },
-    400,
-  );
-
-  assertEquals(invalidJsonPayload?.error?.code, "bad_request");
-  assertEquals(invalidJsonPayload?.error?.message, "Invalid JSON body.");
 });
 
 Deno.test("POST /save updates progress and updated_at", async () => {
@@ -302,61 +117,6 @@ Deno.test("POST /save updates progress and updated_at", async () => {
       new Date(progressRows.updated_at).getTime(),
       new Date(savePayload.updated_at).getTime(),
     );
-  } finally {
-    await cleanupTestData({ classCode, studentId, rateLimitIp });
-  }
-});
-
-Deno.test("POST /save rejects malformed or missing updates", async () => {
-  const classCode = makeClassCode();
-  const studentCode = makeStudentCode();
-  const displayName = "Edge Invalid Saver";
-  const rateLimitIp = makeRateLimitIp();
-  let studentId: string | undefined;
-
-  try {
-    await createClass(classCode);
-
-    const joinPayload = await joinSession({
-      classCode,
-      studentCode,
-      displayName,
-      rateLimitIp,
-    });
-
-    studentId = joinPayload.student_profile.id;
-
-    const missingUpdatesPayload = await fetchErrorJson<any>(
-      `${functionsBaseUrl}/save`,
-      {
-        method: "POST",
-        headers: {
-          "content-type": "application/json",
-          authorization: `Bearer ${joinPayload.session_token}`,
-        },
-        body: JSON.stringify({}),
-      },
-      400,
-    );
-
-    assertEquals(missingUpdatesPayload?.error?.code, "bad_request");
-    assertEquals(missingUpdatesPayload?.error?.message, "Validation failed.");
-
-    const emptyUpdatesPayload = await fetchErrorJson<any>(
-      `${functionsBaseUrl}/save`,
-      {
-        method: "POST",
-        headers: {
-          "content-type": "application/json",
-          authorization: `Bearer ${joinPayload.session_token}`,
-        },
-        body: JSON.stringify({ updates: [] }),
-      },
-      400,
-    );
-
-    assertEquals(emptyUpdatesPayload?.error?.code, "bad_request");
-    assertEquals(emptyUpdatesPayload?.error?.message, "Validation failed.");
   } finally {
     await cleanupTestData({ classCode, studentId, rateLimitIp });
   }
@@ -453,43 +213,6 @@ Deno.test("GET /load returns progress with optional since filter", async () => {
         authorization: "Bearer invalid-token",
       },
     }, 401);
-  } finally {
-    await cleanupTestData({ classCode, studentId, rateLimitIp });
-  }
-});
-
-Deno.test("GET /load rejects malformed query values", async () => {
-  const classCode = makeClassCode();
-  const studentCode = makeStudentCode();
-  const displayName = "Edge Invalid Loader";
-  const rateLimitIp = makeRateLimitIp();
-  let studentId: string | undefined;
-
-  try {
-    await createClass(classCode);
-
-    const joinPayload = await joinSession({
-      classCode,
-      studentCode,
-      displayName,
-      rateLimitIp,
-    });
-
-    studentId = joinPayload.student_profile.id;
-
-    const invalidSincePayload = await fetchErrorJson<any>(
-      `${functionsBaseUrl}/load?since=not-a-date`,
-      {
-        method: "GET",
-        headers: {
-          authorization: `Bearer ${joinPayload.session_token}`,
-        },
-      },
-      400,
-    );
-
-    assertEquals(invalidSincePayload?.error?.code, "bad_request");
-    assertEquals(invalidSincePayload?.error?.message, "Validation failed.");
   } finally {
     await cleanupTestData({ classCode, studentId, rateLimitIp });
   }

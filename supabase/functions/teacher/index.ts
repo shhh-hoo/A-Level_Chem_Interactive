@@ -198,7 +198,7 @@ serve(async (request) => {
   const weak_topics = Array.from(topicSummary.values())
     .map((topic) => ({
       topic: topic.topic,
-      average_progress: topic.progress_sum / topic.total,
+      average_progress: Number((topic.progress_sum / topic.total).toFixed(3)),
       total: topic.total,
     }))
     .sort((a, b) =>

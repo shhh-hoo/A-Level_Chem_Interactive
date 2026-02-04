@@ -21,6 +21,17 @@ Reference: `docs/roadmap.md` → “8) Code-based access & progress sync plan (d
 
 ---
 
+## Repo map (where M0 work lives today)
+Use these existing locations to keep changes consistent with the current codebase layout:
+
+- **Frontend**: `src/` (routes, UI, client logic). Static assets live in `public/`.
+- **Edge functions**: `supabase/functions/` (join/load/save/teacher/report).
+- **Database**: `supabase/migrations/` (schema), `supabase/seed/` and `supabase/seed.sql` (seed data).
+- **Tests**: `tests/` (current suites: `paths.test.js`, `db.test.js`, `structure.test.js`).
+- **Test scripts**: `scripts/` (e.g., `scripts/test-edge.sh`).
+
+---
+
 ## Workflow: test‑driven development (TDD)
 **Rule:** for any new behavior, **write or update tests first**, then implement.
 
@@ -51,7 +62,7 @@ If any test fails, stop and address the failure or document why the environment 
 Use the acceptance checks from the roadmap to determine which tests to create or update.
 
 ### T1 — Frontend skeleton (routes, forms, base UI)
-**Scope:** `/student` + `/teacher` routes, join/login forms, base layout/UI. See roadmap for full scope.
+**Scope:** `/student` + `/teacher` routes, join/login forms, base layout/UI. See roadmap for full scope. Primary implementation area is `src/`.
 
 **Tests to write first (examples):**
 - Route access/render checks for student/teacher views.
@@ -62,7 +73,7 @@ Use the acceptance checks from the roadmap to determine which tests to create or
 - Ensure role gating matches roadmap guidance.
 
 ### T2 — DB schema + migrations
-**Scope:** tables for classes, students, sessions, progress; teacher auth hash storage.
+**Scope:** tables for classes, students, sessions, progress; teacher auth hash storage. Primary implementation area is `supabase/migrations/`.
 
 **Tests to write first (examples):**
 - Migration sanity checks (schema contains required tables/columns).
@@ -73,7 +84,7 @@ Use the acceptance checks from the roadmap to determine which tests to create or
 - Document schema expectations in relevant docs.
 
 ### T3 — Edge functions (join, load, save, teacher/report)
-**Scope:** Deno edge functions with validation, hashing, and rate limiting per roadmap.
+**Scope:** Deno edge functions with validation, hashing, and rate limiting per roadmap. Primary implementation area is `supabase/functions/`.
 
 **Tests to write first (examples):**
 - Input validation (Zod) for each function.
@@ -85,7 +96,7 @@ Use the acceptance checks from the roadmap to determine which tests to create or
 - Use deterministic, testable helpers.
 
 ### T4 — Offline‑first sync
-**Scope:** local‑first storage + background sync, conflict resolution via `updated_at`.
+**Scope:** local‑first storage + background sync, conflict resolution via `updated_at`. Primary implementation area is `src/` with any storage helpers located alongside related features.
 
 **Tests to write first (examples):**
 - Local persistence survives refresh/offline.
@@ -97,7 +108,7 @@ Use the acceptance checks from the roadmap to determine which tests to create or
 - Surface sync status in UI.
 
 ### T5 — Student MVP
-**Scope:** activity list + activity page + status bar.
+**Scope:** activity list + activity page + status bar. Primary implementation area is `src/`.
 
 **Tests to write first (examples):**
 - Activity list renders from mocked data.
@@ -107,7 +118,7 @@ Use the acceptance checks from the roadmap to determine which tests to create or
 - Keep data model aligned with roadmap expectations.
 
 ### T6 — Teacher dashboard
-**Scope:** stats, leaderboard, distribution, CSV export.
+**Scope:** stats, leaderboard, distribution, CSV export. Primary implementation area is `src/` with report calls wired to `supabase/functions/teacher/report`.
 
 **Tests to write first (examples):**
 - Report page renders with aggregated data.
@@ -123,4 +134,3 @@ Before marking a task as done:
 - ✅ Tests run in required order and results recorded.
 - ✅ Documentation updated (if behavior or scope changed).
 - ✅ Changes align with `docs/roadmap.md` acceptance checks.
-

@@ -17,41 +17,41 @@ const colors = {
     noRxn: '#ef4444'
 };
 
-const gData = {
-    nodes: [
-        { id: 'Crude', name: 'Crude Oil', color: colors.crude, val: 20 },
-        { id: 'Alkane', name: 'Alkanes', color: colors.hc, val: 10 },
-        { id: 'Alkene', name: 'Alkenes', color: colors.hc, val: 10 },
-        { id: 'Halo', name: 'Halogenoalkanes', color: colors.halo, val: 12 },
+const baseNodes = [
+    { id: 'Crude', name: 'Crude Oil', color: colors.crude, val: 20 },
+    { id: 'Alkane', name: 'Alkanes', color: colors.hc, val: 10 },
+    { id: 'Alkene', name: 'Alkenes', color: colors.hc, val: 10 },
+    { id: 'Halo', name: 'Halogenoalkanes', color: colors.halo, val: 12 },
 
-        // New Alcohol Structure
-        { id: 'AlcoholGroup', name: 'Alcohols', color: colors.alcGroup, val: 15 },
-        { id: 'Alc1', name: '1° Alcohol', color: colors.alc1, val: 8 },
-        { id: 'Alc2', name: '2° Alcohol', color: colors.alc2, val: 8 },
-        { id: 'Alc3', name: '3° Alcohol', color: colors.alc3, val: 8 },
+    // New Alcohol Structure
+    { id: 'AlcoholGroup', name: 'Alcohols', color: colors.alcGroup, val: 15 },
+    { id: 'Alc1', name: '1° Alcohol', color: colors.alc1, val: 8 },
+    { id: 'Alc2', name: '2° Alcohol', color: colors.alc2, val: 8 },
+    { id: 'Alc3', name: '3° Alcohol', color: colors.alc3, val: 8 },
 
-        { id: 'Ald', name: 'Aldehyde', color: colors.carbonyl, val: 8 },
-        { id: 'Ket', name: 'Ketone', color: colors.carbonyl, val: 8 },
-        { id: 'Carb', name: 'Carboxylic Acid', color: colors.acid, val: 10 },
-        { id: 'Ester', name: 'Ester', color: colors.acid, val: 10 },
-        { id: 'Amine', name: 'Amine', color: colors.amine, val: 8 },
-        { id: 'Nitrile', name: 'Nitrile', color: colors.nitrile, val: 8 },
-        { id: 'Diol', name: 'Diol', color: colors.alc1, val: 8 },
-        { id: 'Hydroxynitrile', name: 'Hydroxynitrile', color: colors.nitrile, val: 8 },
-        { id: 'Polymer', name: 'Poly(alkene)', color: colors.polymer, val: 8 },
-        { id: 'PVC', name: 'PVC', color: colors.polymer, val: 8 },
-        { id: 'Chloroalkene', name: 'Chloroalkene', color: colors.halo, val: 8 },
-        { id: 'Combustion', name: 'CO₂ + H₂O', color: colors.product, val: 6 },
-        { id: 'IncompleteCombustion', name: 'CO/C + H₂O', color: colors.product, val: 6 },
-        { id: 'CrackingMix', name: 'Cracking Products', color: colors.product, val: 8 },
-        { id: 'Alkoxide', name: 'Alkoxide', color: colors.product, val: 6 },
-        { id: 'Carboxylate', name: 'Carboxylate Salt', color: colors.product, val: 6 },
-        { id: 'AgX', name: 'AgX Precipitate', color: colors.test, val: 6 },
-        { id: 'DNPH', name: '2,4-DNPH Derivative', color: colors.test, val: 6 },
-        { id: 'Iodoform', name: 'Iodoform (CHI₃)', color: colors.test, val: 6 },
-        { id: 'NoRxn', name: 'No Reaction', color: colors.noRxn, val: 5 }
-    ],
-    links: [
+    { id: 'Ald', name: 'Aldehyde', color: colors.carbonyl, val: 8 },
+    { id: 'Ket', name: 'Ketone', color: colors.carbonyl, val: 8 },
+    { id: 'Carb', name: 'Carboxylic Acid', color: colors.acid, val: 10 },
+    { id: 'Ester', name: 'Ester', color: colors.acid, val: 10 },
+    { id: 'Amine', name: 'Amine', color: colors.amine, val: 8 },
+    { id: 'Nitrile', name: 'Nitrile', color: colors.nitrile, val: 8 },
+    { id: 'Diol', name: 'Diol', color: colors.alc1, val: 8 },
+    { id: 'Hydroxynitrile', name: 'Hydroxynitrile', color: colors.nitrile, val: 8 },
+    { id: 'Polymer', name: 'Poly(alkene)', color: colors.polymer, val: 8 },
+    { id: 'PVC', name: 'PVC', color: colors.polymer, val: 8 },
+    { id: 'Chloroalkene', name: 'Chloroalkene', color: colors.halo, val: 8 },
+    { id: 'Combustion', name: 'CO₂ + H₂O', color: colors.product, val: 6 },
+    { id: 'IncompleteCombustion', name: 'CO/C + H₂O', color: colors.product, val: 6 },
+    { id: 'CrackingMix', name: 'Cracking Products', color: colors.product, val: 8 },
+    { id: 'Alkoxide', name: 'Alkoxide', color: colors.product, val: 6 },
+    { id: 'Carboxylate', name: 'Carboxylate Salt', color: colors.product, val: 6 },
+    { id: 'AgX', name: 'AgX Precipitate', color: colors.test, val: 6 },
+    { id: 'DNPH', name: '2,4-DNPH Derivative', color: colors.test, val: 6 },
+    { id: 'Iodoform', name: 'Iodoform (CHI₃)', color: colors.test, val: 6 },
+    { id: 'NoRxn', name: 'No Reaction', color: colors.noRxn, val: 5 }
+];
+
+const baseLinks = [
         // Structural Links (New) - No particles, no arrows
         { source: 'AlcoholGroup', target: 'Alc1', label: 'Class', type: 'structure' },
         { source: 'AlcoholGroup', target: 'Alc2', label: 'Class', type: 'structure' },
@@ -124,7 +124,118 @@ const gData = {
 
         // Polymerisation
         { source: 'Chloroalkene', target: 'PVC', label: 'Addition Polymerisation', reagents: 'Catalyst/Pressure', type: 'Addition Polymerisation' }
-    ]
+];
+
+const nodeMetadataById = {
+    Crude: {
+        level: 'AS',
+        topic: 'Hydrocarbons',
+        examTips: ['Mention fractional distillation before cracking or reforming pathways.']
+    },
+    Alkene: {
+        level: 'AS',
+        topic: 'Hydrocarbons',
+        examTips: ['State electrophilic addition and quote both reagent and condition.']
+    },
+    AlcoholGroup: {
+        level: 'AS',
+        topic: 'Hydroxy compounds',
+        examTips: ['Classify alcohols first; oxidation outcomes depend on 1°/2°/3° type.']
+    },
+    Carb: {
+        level: 'A2',
+        topic: 'Carboxylic acids and derivatives',
+        examTips: ['Remember acid-carbonate reactions release CO2 effervescence.']
+    },
+    Polymer: {
+        level: 'A2',
+        topic: 'Polymerisation',
+        examTips: ['State monomer and repeat unit when describing polymer formation.']
+    },
+    Chloroalkene: {
+        level: 'A2',
+        topic: 'Polymerisation',
+        examTips: ['PVC is formed by addition polymerisation of chloroethene.']
+    },
+    NoRxn: {
+        level: 'AS',
+        topic: 'Reaction limits',
+        examTips: ['Do not force oxidation pathways for tertiary alcohols in standard conditions.']
+    }
+};
+
+const linkMetadataByKey = {
+    'Alkane|Halo|Free Radical Sub': {
+        mechanismSummary: 'Homolytic substitution under UV light through initiation, propagation, and termination.',
+        conditions: 'UV light with halogen gas; control exposure to limit polysubstitution.',
+        quizData: {
+            prompt: 'Name the mechanism for converting an alkane to a halogenoalkane.',
+            hiddenFields: ['type'],
+            answer: 'Free radical substitution'
+        },
+        animationId: 'free-radical-substitution'
+    },
+    'Alkene|AlcoholGroup|Hydration': {
+        mechanismSummary: 'Electrophilic addition where steam adds across C=C using acid catalyst.',
+        conditions: 'Steam, H3PO4 catalyst, high temperature and pressure.',
+        quizData: {
+            prompt: 'Which reagent/conditions hydrate an alkene to an alcohol?',
+            hiddenFields: ['reagents'],
+            answer: 'Steam with H3PO4 catalyst'
+        },
+        animationId: 'alkene-hydration'
+    },
+    'Alc1|Ald|Oxidation': {
+        mechanismSummary: 'Primary alcohol oxidizes to aldehyde under controlled distillation.',
+        conditions: 'Acidified K2Cr2O7 and gentle heating with distillation.',
+        quizData: {
+            prompt: 'What product forms from mild oxidation of a primary alcohol?',
+            hiddenFields: ['target'],
+            answer: 'Aldehyde'
+        },
+        animationId: 'primary-alcohol-oxidation'
+    },
+    'Halo|Alkene|Elimination': {
+        mechanismSummary: 'Base-induced elimination removes HX to regenerate a double bond.',
+        conditions: 'Ethanolic NaOH with heat under reflux.',
+        quizData: {
+            prompt: 'Which condition favors elimination for halogenoalkanes?',
+            hiddenFields: ['reagents'],
+            answer: 'Ethanolic NaOH with heat'
+        },
+        animationId: 'haloalkane-elimination'
+    }
+};
+
+const getLinkKey = (link) => `${link.source}|${link.target}|${link.label}`;
+
+const mapNodeMetadata = (node) => {
+    const metadata = nodeMetadataById[node.id] || {};
+    return {
+        ...node,
+        level: metadata.level || 'AS',
+        topic: metadata.topic || 'Organic chemistry',
+        examTips: metadata.examTips || []
+    };
+};
+
+const mapLinkMetadata = (link) => {
+    const metadata = linkMetadataByKey[getLinkKey(link)] || {};
+    return {
+        ...link,
+        conditions:
+            metadata.conditions ||
+            link.reagents ||
+            'Structural relationship between compound classes.',
+        mechanismSummary: metadata.mechanismSummary || link.type || 'Reaction pathway',
+        quizData: metadata.quizData || null,
+        animationId: metadata.animationId || null
+    };
+};
+
+const gData = {
+    nodes: baseNodes.map(mapNodeMetadata),
+    links: baseLinks.map(mapLinkMetadata)
 };
 
 const compoundDescriptions = {

@@ -36,6 +36,17 @@ student join or teacher login. The teacher route and teacher-only UI are blocked
 - Run the M0 test suite (see below).
 - Join a class and confirm local storage keys are populated in the browser.
 
+## M1 starter slice — Structured metadata + fixed info blocks
+
+**What changed**
+- Legacy reaction-map nodes now include `level`, `topic`, and `examTips`.
+- Legacy reaction-map links now include `conditions`, `mechanismSummary`, `quizData`, and `animationId`.
+- The legacy side panel includes fixed `What / How / Why / Exam tip` blocks with safe fallbacks.
+
+**How to verify**
+- Run `node tests/m1-data-model.test.js`.
+- Open `/legacy/organic-map.html`, click a node or reaction link, and confirm all four info blocks populate.
+
 ## Project structure (M0 frontend)
 
 ```
@@ -121,6 +132,11 @@ psql "$SUPABASE_DB_URL" -f supabase/seed/seed-demo.sql
 The plaintext demo class/teacher/student codes are written to `supabase/seed/demo-codes.txt`
 and should stay local (not committed). The database only receives SHA-256 hashes derived from
 `<code>:<class_code>:<server_salt>`.
+
+The same output file also includes one deterministic manual test set:
+`manual_test_class_code`, `manual_test_teacher_code`, and `manual_test_student_1_code`.
+Override these defaults with `MANUAL_TEST_CLASS_CODE`, `MANUAL_TEST_TEACHER_CODE`,
+`MANUAL_TEST_STUDENT_CODE`, and `MANUAL_TEST_STUDENT_NAME` if needed.
 
 ## Supabase Edge Functions (local)
 

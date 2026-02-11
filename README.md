@@ -43,6 +43,7 @@ student join or teacher login. The teacher route and teacher-only UI are blocked
   - `level` may be `AS`, `A2`, or `AS/A2` when a node spans both phase section tags.
 - Legacy reaction-map links now include `conditions`, `mechanismSummary`, `quizData`, and `animationId`.
 - Nodes and links now include explicit `syllabusSections` tags (CIE 9701 section numbers).
+  - Node section tags are authored per node to keep AS/A2 separation intentional.
 - The legacy side panel includes fixed `What / How / Why / Exam tip` blocks with safe fallbacks.
 - Schema checks now enforce metadata quality across the full map:
   - Every node must have non-fallback `topic` and at least one `examTip`.

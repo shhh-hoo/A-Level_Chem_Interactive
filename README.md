@@ -42,6 +42,7 @@ student join or teacher login. The teacher route and teacher-only UI are blocked
 - Legacy reaction-map nodes now include `level`, `topic`, and `examTips`.
 - Legacy reaction-map links now include `conditions`, `mechanismSummary`, `quizData`, and `animationId`.
 - The legacy side panel includes fixed `What / How / Why / Exam tip` blocks with safe fallbacks.
+- AS core pathways now require authored metadata in tests (fallback metadata is rejected for priority links/nodes).
 
 **How to verify**
 - Run `node tests/m1-data-model.test.js`.

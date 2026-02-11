@@ -16,14 +16,9 @@ jobs:
         with:
           node-version: 20
 
-      - name: Run reaction path tests
-        run: node tests/paths.test.js
-
-      - name: Run structure tests
-        run: node tests/structure.test.js
-
-      - name: Run database schema tests
-        run: node tests/db.test.js
+      - name: Run repository Node tests
+        run: |
+          node --test tests/*.test.js
 
   supabase-db-tests:
     runs-on: ubuntu-latest

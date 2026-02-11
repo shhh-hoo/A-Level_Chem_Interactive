@@ -54,6 +54,19 @@ assertIncludesAll(
   'seed script'
 );
 
+assertIncludesAll(
+  seedScript,
+  [
+    'MANUAL_TEST_CLASS_CODE',
+    'MANUAL_TEST_TEACHER_CODE',
+    'MANUAL_TEST_STUDENT_CODE',
+    'manual_test_class_code',
+    'manual_test_teacher_code',
+    'manual_test_student_1_code',
+  ],
+  'manual test seed codes'
+);
+
 assert.ok(
   seedScript.includes("digest('hex')"),
   'Expected seed script to store SHA-256 hashes as hex.'

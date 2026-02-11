@@ -490,16 +490,33 @@ const normalizeSections = (sections) =>
 const ensureSectionRange = (sections, level) => {
     const hasAsSection = sections.some((section) => section <= AS_SECTION_MAX);
     const hasA2Section = sections.some((section) => section > AS_SECTION_MAX);
+    const withAsSection = hasAsSection ? sections : [...sections, INTRO_ORGANIC_SECTIONS[0]];
+    const withA2Section = hasA2Section ? sections : [...sections, INTRO_ORGANIC_SECTIONS[1]];
 
     if (level === 'AS' && !hasAsSection) {
-        return normalizeSections([...sections, INTRO_ORGANIC_SECTIONS[0]]);
+        return normalizeSections(withAsSection);
     }
 
     if (level === 'A2' && !hasA2Section) {
-        return normalizeSections([...sections, INTRO_ORGANIC_SECTIONS[1]]);
+        return normalizeSections(withA2Section);
+    }
+
+    if (level === 'AS/A2') {
+        return normalizeSections([...withAsSection, ...withA2Section]);
     }
 
     return sections;
+};
+
+const inferLevelFromSections = (sections) => {
+    const hasAsSection = sections.some((section) => section <= AS_SECTION_MAX);
+    const hasA2Section = sections.some((section) => section > AS_SECTION_MAX);
+
+    if (hasAsSection && hasA2Section) {
+        return 'AS/A2';
+    }
+
+    return hasA2Section ? 'A2' : 'AS';
 };
 
 const buildFallbackNodeMetadata = (node) => {
@@ -535,23 +552,24 @@ const buildNodeSyllabusSections = ({ node, metadata, level, topic, fallback }) =
 const mapNodeMetadata = (node) => {
     const metadata = nodeMetadataById[node.id] || {};
     const fallback = buildFallbackNodeMetadata(node);
-    const level = metadata.level || fallback.level;
+    const requestedLevel = metadata.level || fallback.level;
     const topic = metadata.topic || fallback.topic;
+    const syllabusSections = buildNodeSyllabusSections({
+        node,
+        metadata,
+        level: requestedLevel,
+        topic,
+        fallback
+    });
     return {
         ...node,
-        level,
+        level: inferLevelFromSections(syllabusSections),
         topic,
         examTips:
             Array.isArray(metadata.examTips) && metadata.examTips.length > 0
                 ? metadata.examTips
                 : fallback.examTips,
-        syllabusSections: buildNodeSyllabusSections({
-            node,
-            metadata,
-            level,
-            topic,
-            fallback
-        })
+        syllabusSections
     };
 };
 

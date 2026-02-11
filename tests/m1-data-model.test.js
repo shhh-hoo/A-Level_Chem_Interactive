@@ -9,6 +9,7 @@ const FALLBACK_LINK_CONDITIONS = 'Structural relationship between compound class
 const STRUCTURE_LINK_TYPE = 'structure';
 const MIN_SECTION = 1;
 const MAX_SECTION = 37;
+const VALID_LEVELS = new Set(['AS', 'A2', 'AS/A2']);
 
 const PRIORITY_NODE_IDS = [
   'Crude',
@@ -53,8 +54,8 @@ const assertSyllabusSections = (value, message) => {
 
 const assertNodeMetadata = (node, label) => {
   assert.ok(
-    node.level === 'AS' || node.level === 'A2',
-    `${label} node "${node.id}" must include level (AS/A2).`,
+    VALID_LEVELS.has(node.level),
+    `${label} node "${node.id}" must include level (AS, A2, or AS/A2).`,
   );
   assert.ok(isNonEmptyString(node.topic), `${label} node "${node.id}" must include topic.`);
   assert.notStrictEqual(

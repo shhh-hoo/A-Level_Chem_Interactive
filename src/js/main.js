@@ -20,6 +20,35 @@ let reactionDetails;
 let compoundDetails;
 let compoundDesc;
 let animateBtn;
+let infoWhatElem;
+let infoHowElem;
+let infoWhyElem;
+let infoExamTipElem;
+
+const defaultInfo = {
+    what: 'Select a node or reaction to view structured study notes.',
+    how: 'Follow linked pathways and match reagents to mechanism patterns.',
+    why: 'This map is designed for rapid scan-and-recall revision.',
+    examTip: 'State both reagent and condition to secure full method marks.'
+};
+
+function readEndpointName(endpoint) {
+    if (endpoint && typeof endpoint === 'object') {
+        return endpoint.name || endpoint.id || 'compound';
+    }
+    return String(endpoint || 'compound');
+}
+
+function renderInfoBlocks(info = {}) {
+    if (!infoWhatElem || !infoHowElem || !infoWhyElem || !infoExamTipElem) {
+        return;
+    }
+
+    infoWhatElem.innerText = info.what || defaultInfo.what;
+    infoHowElem.innerText = info.how || defaultInfo.how;
+    infoWhyElem.innerText = info.why || defaultInfo.why;
+    infoExamTipElem.innerText = info.examTip || defaultInfo.examTip;
+}
 
 // UI Helpers.
 // These functions coordinate text, visibility, and graph styling when the user
@@ -28,6 +57,7 @@ function showDefault() {
     if (!contentArea) return;
     contentArea.style.display = 'block';
     dynamicContent.classList.add('hidden');
+    renderInfoBlocks(defaultInfo);
     highlightLink = null;
     if (Graph) Graph.linkDirectionalParticleSpeed(l => 0.002).linkWidth(1); // Reset
 }
@@ -49,8 +79,18 @@ function showReaction(link) {
     reactionDetails.classList.remove('hidden');
     compoundDetails.classList.add('hidden');
 
-    reagentsElem.innerText = link.reagents;
-    mechanismElem.innerText = link.type;
+    reagentsElem.innerText = link.conditions || link.reagents || 'See pathway notes.';
+    mechanismElem.innerText = link.mechanismSummary || link.type || 'Reaction pathway';
+    const sourceName = readEndpointName(link.source);
+    const targetName = readEndpointName(link.target);
+    const quizPrompt = link.quizData?.prompt ? `${link.quizData.prompt} ` : '';
+    const quizAnswer = link.quizData?.answer ? `Answer: ${link.quizData.answer}.` : '';
+    renderInfoBlocks({
+        what: `${sourceName} to ${targetName}: ${link.label || 'reaction pathway'}.`,
+        how: link.mechanismSummary || link.type || defaultInfo.how,
+        why: `Use this conversion when planning routes between ${sourceName} and ${targetName}.`,
+        examTip: `${quizPrompt}${quizAnswer}`.trim() || `Quote full conditions: ${reagentsElem.innerText}.`
+    });
 
     // Highlight Visualization.
     // We visually emphasize the chosen link by increasing width and particle
@@ -106,6 +146,13 @@ function showCompound(node) {
     compoundDetails.classList.remove('hidden');
 
     compoundDesc.innerText = getCompoundDescription(node);
+    const firstTip = Array.isArray(node.examTips) && node.examTips.length ? node.examTips[0] : null;
+    renderInfoBlocks({
+        what: `${node.name} belongs to ${node.topic || 'organic chemistry'}.`,
+        how: 'Use connected links to identify valid conversions and required conditions.',
+        why: `${node.name} appears in multi-step synthesis and data interpretation questions.`,
+        examTip: firstTip || defaultInfo.examTip
+    });
     highlightLink = null;
     // Reset links but preserve structure link subtlety so the network stays readable.
     if (Graph) {
@@ -139,6 +186,10 @@ window.addEventListener('load', () => {
     compoundDetails = document.getElementById('compoundDetails');
     compoundDesc = document.getElementById('compoundDesc');
     animateBtn = document.getElementById('animateBtn');
+    infoWhatElem = document.getElementById('infoWhat');
+    infoHowElem = document.getElementById('infoHow');
+    infoWhyElem = document.getElementById('infoWhy');
+    infoExamTipElem = document.getElementById('infoExamTip');
 
     // 2. Initialize 3D Graph.
     // ForceGraph3D is injected by the CDN script in index.html.

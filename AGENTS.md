@@ -39,11 +39,6 @@ Ask for approval before modifying:
 ## 4) Mandatory test execution before finishing
 You must run tests before claiming the work is done.
 
-Run commands in this order:
-1) `node tests/paths.test.js`
-2) Any additional relevant tests affected by the change (list them explicitly)
-3) `bash scripts/test-edge.sh`
-
 Rules:
 - Do not say “tests passed” unless you actually ran them and saw them pass.
 - If tests fail, report the failures and either fix them or stop and ask for direction.

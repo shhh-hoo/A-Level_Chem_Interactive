@@ -148,142 +148,170 @@ const nodeMetadataById = {
     Crude: {
         level: 'AS',
         topic: 'Hydrocarbons',
-        examTips: ['Mention fractional distillation before cracking or reforming pathways.']
+        examTips: ['Mention fractional distillation before cracking or reforming pathways.'],
+        syllabusSections: [13, 14]
     },
     Alkane: {
         level: 'AS',
         topic: 'Hydrocarbons',
-        examTips: ['Use radical substitution language only when UV light and halogen are present.']
+        examTips: ['Use radical substitution language only when UV light and halogen are present.'],
+        syllabusSections: [14, 21]
     },
     Alkene: {
         level: 'AS',
         topic: 'Hydrocarbons',
-        examTips: ['State electrophilic addition and quote both reagent and condition.']
+        examTips: ['State electrophilic addition and quote both reagent and condition.'],
+        syllabusSections: [14, 29, 30, 36]
     },
     Halo: {
         level: 'AS',
         topic: 'Halogen compounds',
-        examTips: ['Separate substitution and elimination conditions clearly in exam responses.']
+        examTips: ['Separate substitution and elimination conditions clearly in exam responses.'],
+        syllabusSections: [15, 31]
     },
     AlcoholGroup: {
         level: 'AS',
         topic: 'Hydroxy compounds',
-        examTips: ['Classify alcohols first; oxidation outcomes depend on 1°/2°/3° type.']
+        examTips: ['Classify alcohols first; oxidation outcomes depend on 1°/2°/3° type.'],
+        syllabusSections: [16, 21]
     },
     Alc1: {
         level: 'AS',
         topic: 'Hydroxy compounds',
-        examTips: ['Primary alcohol oxidation can stop at aldehyde if distilled promptly.']
+        examTips: ['Primary alcohol oxidation can stop at aldehyde if distilled promptly.'],
+        syllabusSections: [16, 21]
     },
     Alc2: {
-        level: 'AS',
+        level: 'A2',
         topic: 'Hydroxy compounds',
-        examTips: ['Secondary alcohol oxidation gives ketones under reflux conditions.']
+        examTips: ['Secondary alcohol oxidation gives ketones under reflux conditions.'],
+        syllabusSections: [32, 36]
     },
     Alc3: {
-        level: 'AS',
+        level: 'A2',
         topic: 'Hydroxy compounds',
-        examTips: ['Tertiary alcohols resist oxidation under standard dichromate conditions.']
+        examTips: ['Tertiary alcohols resist oxidation under standard dichromate conditions.'],
+        syllabusSections: [32]
     },
     Ald: {
         level: 'AS',
         topic: 'Carbonyl compounds',
-        examTips: ['Aldehydes oxidize further; include test observation when relevant.']
+        examTips: ['Aldehydes oxidize further; include test observation when relevant.'],
+        syllabusSections: [17, 22]
     },
     Ket: {
         level: 'AS',
         topic: 'Carbonyl compounds',
-        examTips: ['Ketones resist mild oxidation and are reduced to secondary alcohols.']
+        examTips: ['Ketones resist mild oxidation and are reduced to secondary alcohols.'],
+        syllabusSections: [17, 22]
     },
     Carb: {
-        level: 'AS',
+        level: 'A2',
         topic: 'Carboxylic acids and derivatives',
-        examTips: ['Remember acid-carbonate reactions release CO2 effervescence.']
+        examTips: ['Remember acid-carbonate reactions release CO2 effervescence.'],
+        syllabusSections: [33, 36]
     },
     Ester: {
         level: 'AS',
         topic: 'Carboxylic acids and derivatives',
-        examTips: ['Name esters from alcohol first, then carboxylate part ending in -oate.']
+        examTips: ['Name esters from alcohol first, then carboxylate part ending in -oate.'],
+        syllabusSections: [18, 33, 36]
     },
     Amine: {
         level: 'AS',
         topic: 'Nitrogen compounds',
-        examTips: ['Use excess ethanolic ammonia to favor primary amine formation in substitution routes.']
+        examTips: ['Use excess ethanolic ammonia to favor primary amine formation in substitution routes.'],
+        syllabusSections: [19, 34, 36]
     },
     Nitrile: {
-        level: 'AS',
+        level: 'A2',
         topic: 'Nitrogen compounds',
-        examTips: ['Nitrile formation extends the carbon chain by one carbon atom.']
+        examTips: ['Nitrile formation extends the carbon chain by one carbon atom.'],
+        syllabusSections: [34, 36]
     },
     Diol: {
-        level: 'AS',
+        level: 'A2',
         topic: 'Hydroxy compounds',
-        examTips: ['Cold, dilute permanganate indicates alkene oxidation to vicinal diols.']
+        examTips: ['Cold, dilute permanganate indicates alkene oxidation to vicinal diols.'],
+        syllabusSections: [32]
     },
     Hydroxynitrile: {
-        level: 'AS',
+        level: 'A2',
         topic: 'Nitrogen compounds',
-        examTips: ['Hydroxynitrile formation requires in situ HCN generated safely from cyanide and acid.']
+        examTips: ['Hydroxynitrile formation requires in situ HCN generated safely from cyanide and acid.'],
+        syllabusSections: [34, 36]
     },
     Polymer: {
         level: 'AS',
         topic: 'Polymerisation',
-        examTips: ['State monomer and repeat unit when describing polymer formation.']
+        examTips: ['State monomer and repeat unit when describing polymer formation.'],
+        syllabusSections: [20, 35]
     },
     PVC: {
-        level: 'AS',
+        level: 'A2',
         topic: 'Polymerisation',
-        examTips: ['Include repeat unit brackets and continuation bonds when drawing PVC structures.']
+        examTips: ['Include repeat unit brackets and continuation bonds when drawing PVC structures.'],
+        syllabusSections: [35]
     },
     Chloroalkene: {
-        level: 'AS',
+        level: 'A2',
         topic: 'Polymerisation',
-        examTips: ['PVC is formed by addition polymerisation of chloroethene.']
+        examTips: ['PVC is formed by addition polymerisation of chloroethene.'],
+        syllabusSections: [35]
     },
     Combustion: {
         level: 'AS',
         topic: 'Hydrocarbons',
-        examTips: ['Complete combustion gives CO2 and H2O when oxygen is in excess.']
+        examTips: ['Complete combustion gives CO2 and H2O when oxygen is in excess.'],
+        syllabusSections: [14]
     },
     IncompleteCombustion: {
         level: 'AS',
         topic: 'Hydrocarbons',
-        examTips: ['Limited oxygen leads to toxic CO or soot, so state the oxygen condition explicitly.']
+        examTips: ['Limited oxygen leads to toxic CO or soot, so state the oxygen condition explicitly.'],
+        syllabusSections: [14]
     },
     CrackingMix: {
         level: 'AS',
         topic: 'Hydrocarbons',
-        examTips: ['Cracking products are a mixture, so identify both alkane and alkene fractions.']
+        examTips: ['Cracking products are a mixture, so identify both alkane and alkene fractions.'],
+        syllabusSections: [14, 21]
     },
     Alkoxide: {
         level: 'AS',
         topic: 'Hydroxy compounds',
-        examTips: ['Alcohol plus sodium forms alkoxide and hydrogen gas; note the bubbling evidence.']
+        examTips: ['Alcohol plus sodium forms alkoxide and hydrogen gas; note the bubbling evidence.'],
+        syllabusSections: [16, 21]
     },
     Carboxylate: {
-        level: 'AS',
+        level: 'A2',
         topic: 'Carboxylic acids and derivatives',
-        examTips: ['Carboxylate salts are ionic and usually more water-soluble than parent acids.']
+        examTips: ['Carboxylate salts are ionic and usually more water-soluble than parent acids.'],
+        syllabusSections: [33, 36]
     },
     AgX: {
         level: 'AS',
         topic: 'Halogen compounds',
-        examTips: ['Learn AgCl, AgBr, AgI colors and ammonia solubility trends for halide tests.']
+        examTips: ['Learn AgCl, AgBr, AgI colors and ammonia solubility trends for halide tests.'],
+        syllabusSections: [15, 22]
     },
     DNPH: {
         level: 'AS',
         topic: 'Carbonyl compounds',
-        examTips: ['2,4-DNPH gives an orange precipitate with aldehydes and ketones.']
+        examTips: ['2,4-DNPH gives an orange precipitate with aldehydes and ketones.'],
+        syllabusSections: [17, 22]
     },
     Iodoform: {
         level: 'AS',
         topic: 'Carbonyl compounds',
-        examTips: ['Iodoform test identifies CH3CO- or CH3CH(OH)- containing compounds.']
+        examTips: ['Iodoform test identifies CH3CO- or CH3CH(OH)- containing compounds.'],
+        syllabusSections: [17, 22]
     },
     NoRxn: {
         level: 'AS',
         topic: 'Reaction limits',
-        examTips: ['Do not force oxidation pathways for tertiary alcohols in standard conditions.']
+        examTips: ['Do not force oxidation pathways for tertiary alcohols in standard conditions.'],
+        syllabusSections: [21]
     }
 };
 
@@ -437,26 +465,6 @@ const A2_FALLBACK_NODE_IDS = new Set([
     'Carboxylate'
 ]);
 const nodeNameById = new Map(baseNodes.map((node) => [node.id, node.name]));
-const TOPIC_SYLLABUS_SECTIONS = {
-    Hydrocarbons: [14, 30],
-    'Halogen compounds': [15, 31],
-    'Hydroxy compounds': [16, 32],
-    'Carbonyl compounds': [17],
-    'Carboxylic acids and derivatives': [18, 33],
-    'Nitrogen compounds': [19, 34],
-    Polymerisation: [20, 35],
-    'Reaction limits': SYNTHESIS_SECTIONS
-};
-const INTRO_NODE_IDS = new Set([
-    'Crude',
-    'Alkane',
-    'Alkene',
-    'Halo',
-    'AlcoholGroup',
-    'Alc1',
-    'Alc2',
-    'Alc3'
-]);
 const ANALYTICAL_NODE_IDS = new Set(['AgX', 'DNPH', 'Iodoform']);
 const SYNTHESIS_LINK_LABELS = new Set([
     'Hydrolysis',
@@ -477,7 +485,6 @@ const slugify = (value) =>
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/^-+|-+$/g, '') || 'pathway';
 const getNodeDisplayName = (nodeId) => nodeNameById.get(nodeId) || String(nodeId);
-const getTopicSyllabusSections = (topic) => TOPIC_SYLLABUS_SECTIONS[topic] || [];
 const normalizeSections = (sections) =>
     Array.from(
         new Set(
@@ -531,21 +538,14 @@ const buildFallbackNodeMetadata = (node) => {
     };
 };
 
-const buildNodeSyllabusSections = ({ node, metadata, level, topic, fallback }) => {
-    const sections = [
-        ...(Array.isArray(metadata.syllabusSections) ? metadata.syllabusSections : []),
-        ...getTopicSyllabusSections(topic),
-        ...(Array.isArray(fallback.syllabusSections) ? fallback.syllabusSections : [])
-    ];
-
-    if (INTRO_NODE_IDS.has(node.id)) {
-        sections.push(...INTRO_ORGANIC_SECTIONS);
-    }
-
-    if (ANALYTICAL_NODE_IDS.has(node.id)) {
-        sections.push(...ANALYTICAL_SECTIONS);
-    }
-
+const buildNodeSyllabusSections = ({ metadata, level, fallback }) => {
+    const explicitSections = Array.isArray(metadata.syllabusSections) ? metadata.syllabusSections : [];
+    const sections =
+        explicitSections.length > 0
+            ? explicitSections
+            : Array.isArray(fallback.syllabusSections)
+              ? fallback.syllabusSections
+              : [];
     return ensureSectionRange(normalizeSections(sections), level);
 };
 
@@ -555,10 +555,8 @@ const mapNodeMetadata = (node) => {
     const requestedLevel = metadata.level || fallback.level;
     const topic = metadata.topic || fallback.topic;
     const syllabusSections = buildNodeSyllabusSections({
-        node,
         metadata,
         level: requestedLevel,
-        topic,
         fallback
     });
     return {

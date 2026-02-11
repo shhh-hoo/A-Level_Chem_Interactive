@@ -104,8 +104,16 @@ const datasets = [
 ];
 
 datasets.forEach(([label, gData]) => {
+  const asNodes = gData.nodes.filter((node) => node.level === 'AS');
+  const a2Nodes = gData.nodes.filter((node) => node.level === 'A2');
   const crossLevelNodes = gData.nodes.filter((node) => node.level === 'AS/A2');
+  assert.ok(asNodes.length > 0, `${label} should include AS-only nodes.`);
+  assert.ok(a2Nodes.length > 0, `${label} should include A2-only nodes.`);
   assert.ok(crossLevelNodes.length > 0, `${label} should include at least one AS/A2 cross-level node.`);
+  assert.ok(
+    crossLevelNodes.length <= Math.floor(gData.nodes.length / 2),
+    `${label} should not classify most nodes as AS/A2; prefer explicit single-phase tags where possible.`,
+  );
 
   gData.nodes.forEach((node) => {
     assertLevelCompatibility(node, label);

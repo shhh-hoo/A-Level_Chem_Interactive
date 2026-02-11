@@ -132,15 +132,45 @@ const nodeMetadataById = {
         topic: 'Hydrocarbons',
         examTips: ['Mention fractional distillation before cracking or reforming pathways.']
     },
+    Alkane: {
+        level: 'AS',
+        topic: 'Hydrocarbons',
+        examTips: ['Use radical substitution language only when UV light and halogen are present.']
+    },
     Alkene: {
         level: 'AS',
         topic: 'Hydrocarbons',
         examTips: ['State electrophilic addition and quote both reagent and condition.']
     },
+    Halo: {
+        level: 'AS',
+        topic: 'Halogen compounds',
+        examTips: ['Separate substitution and elimination conditions clearly in exam responses.']
+    },
     AlcoholGroup: {
         level: 'AS',
         topic: 'Hydroxy compounds',
         examTips: ['Classify alcohols first; oxidation outcomes depend on 1°/2°/3° type.']
+    },
+    Alc1: {
+        level: 'AS',
+        topic: 'Hydroxy compounds',
+        examTips: ['Primary alcohol oxidation can stop at aldehyde if distilled promptly.']
+    },
+    Alc2: {
+        level: 'AS',
+        topic: 'Hydroxy compounds',
+        examTips: ['Secondary alcohol oxidation gives ketones under reflux conditions.']
+    },
+    Ald: {
+        level: 'AS',
+        topic: 'Carbonyl compounds',
+        examTips: ['Aldehydes oxidize further; include test observation when relevant.']
+    },
+    Ket: {
+        level: 'AS',
+        topic: 'Carbonyl compounds',
+        examTips: ['Ketones resist mild oxidation and are reduced to secondary alcohols.']
     },
     Carb: {
         level: 'A2',
@@ -165,6 +195,26 @@ const nodeMetadataById = {
 };
 
 const linkMetadataByKey = {
+    'Crude|Alkane|Cracking': {
+        mechanismSummary: 'Thermal cracking breaks long hydrocarbons into shorter saturated fragments.',
+        conditions: 'Strong heating with catalyst such as Al2O3 under controlled cracking conditions.',
+        quizData: {
+            prompt: 'What process converts crude fractions into smaller alkanes?',
+            hiddenFields: ['label'],
+            answer: 'Cracking'
+        },
+        animationId: 'crude-to-alkane-cracking'
+    },
+    'Crude|Alkene|Cracking': {
+        mechanismSummary: 'Thermal cracking also forms unsaturated hydrocarbons with C=C bonds.',
+        conditions: 'High temperature cracking over catalyst to generate alkene-rich mixtures.',
+        quizData: {
+            prompt: 'Name one unsaturated product family formed during cracking.',
+            hiddenFields: ['target'],
+            answer: 'Alkenes'
+        },
+        animationId: 'crude-to-alkene-cracking'
+    },
     'Alkane|Halo|Free Radical Sub': {
         mechanismSummary: 'Homolytic substitution under UV light through initiation, propagation, and termination.',
         conditions: 'UV light with halogen gas; control exposure to limit polysubstitution.',
@@ -174,6 +224,16 @@ const linkMetadataByKey = {
             answer: 'Free radical substitution'
         },
         animationId: 'free-radical-substitution'
+    },
+    'Alkene|Halo|Electrophilic Add': {
+        mechanismSummary: 'Polar electrophile attacks the alkene pi bond and forms a saturated halogenoalkane.',
+        conditions: 'Hydrogen halide at room temperature with dry conditions where possible.',
+        quizData: {
+            prompt: 'Which mechanism describes HX addition to an alkene?',
+            hiddenFields: ['type'],
+            answer: 'Electrophilic addition'
+        },
+        animationId: 'alkene-hx-addition'
     },
     'Alkene|AlcoholGroup|Hydration': {
         mechanismSummary: 'Electrophilic addition where steam adds across C=C using acid catalyst.',
@@ -185,6 +245,16 @@ const linkMetadataByKey = {
         },
         animationId: 'alkene-hydration'
     },
+    'Halo|AlcoholGroup|Nuc Sub': {
+        mechanismSummary: 'Hydroxide nucleophile substitutes halide to produce alcohol from halogenoalkane.',
+        conditions: 'Aqueous NaOH with heat, favoring substitution in hydroxy synthesis routes.',
+        quizData: {
+            prompt: 'What reagent converts halogenoalkanes to alcohols by substitution?',
+            hiddenFields: ['reagents'],
+            answer: 'Aqueous sodium hydroxide'
+        },
+        animationId: 'halo-to-alcohol-substitution'
+    },
     'Alc1|Ald|Oxidation': {
         mechanismSummary: 'Primary alcohol oxidizes to aldehyde under controlled distillation.',
         conditions: 'Acidified K2Cr2O7 and gentle heating with distillation.',
@@ -195,6 +265,46 @@ const linkMetadataByKey = {
         },
         animationId: 'primary-alcohol-oxidation'
     },
+    'Alc2|Ket|Oxidation': {
+        mechanismSummary: 'Secondary alcohol oxidizes to ketone without further oxidation under standard conditions.',
+        conditions: 'Acidified dichromate under reflux until orange reagent turns green.',
+        quizData: {
+            prompt: 'What oxidation product is expected from a secondary alcohol?',
+            hiddenFields: ['target'],
+            answer: 'Ketone'
+        },
+        animationId: 'secondary-alcohol-oxidation'
+    },
+    'Ald|Carb|Oxidation': {
+        mechanismSummary: 'Aldehyde oxidizes readily to carboxylic acid in warm oxidizing conditions.',
+        conditions: 'Acidified oxidant under reflux or positive Tollens/Fehling-style oxidation test.',
+        quizData: {
+            prompt: 'What is the oxidation product of an aldehyde?',
+            hiddenFields: ['target'],
+            answer: 'Carboxylic acid'
+        },
+        animationId: 'aldehyde-oxidation'
+    },
+    'Ald|Alc1|Reduction': {
+        mechanismSummary: 'Hydride transfer reduces aldehyde carbonyl to primary alcohol.',
+        conditions: 'NaBH4 reduction followed by aqueous workup.',
+        quizData: {
+            prompt: 'Which reagent reduces aldehydes to primary alcohols?',
+            hiddenFields: ['reagents'],
+            answer: 'Sodium borohydride'
+        },
+        animationId: 'aldehyde-reduction'
+    },
+    'Ket|Alc2|Reduction': {
+        mechanismSummary: 'Hydride addition to ketone forms secondary alcohol after protonation.',
+        conditions: 'NaBH4 in suitable solvent, then protonation on workup.',
+        quizData: {
+            prompt: 'Reduction of ketones gives which alcohol class?',
+            hiddenFields: ['target'],
+            answer: 'Secondary alcohol'
+        },
+        animationId: 'ketone-reduction'
+    },
     'Halo|Alkene|Elimination': {
         mechanismSummary: 'Base-induced elimination removes HX to regenerate a double bond.',
         conditions: 'Ethanolic NaOH with heat under reflux.',
@@ -204,6 +314,16 @@ const linkMetadataByKey = {
             answer: 'Ethanolic NaOH with heat'
         },
         animationId: 'haloalkane-elimination'
+    },
+    'AlcoholGroup|Alkene|Dehydration': {
+        mechanismSummary: 'Elimination removes water from alcohol to regenerate alkene unsaturation.',
+        conditions: 'Hot Al2O3 catalyst or concentrated H2SO4 with heating.',
+        quizData: {
+            prompt: 'What reaction type converts alcohols to alkenes with heat?',
+            hiddenFields: ['type'],
+            answer: 'Elimination (dehydration)'
+        },
+        animationId: 'alcohol-dehydration'
     }
 };
 

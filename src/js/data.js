@@ -196,22 +196,22 @@ const nodeMetadataById = {
         examTips: ['Ketones resist mild oxidation and are reduced to secondary alcohols.']
     },
     Carb: {
-        level: 'A2',
+        level: 'AS',
         topic: 'Carboxylic acids and derivatives',
         examTips: ['Remember acid-carbonate reactions release CO2 effervescence.']
     },
     Ester: {
-        level: 'A2',
+        level: 'AS',
         topic: 'Carboxylic acids and derivatives',
         examTips: ['Name esters from alcohol first, then carboxylate part ending in -oate.']
     },
     Amine: {
-        level: 'A2',
+        level: 'AS',
         topic: 'Nitrogen compounds',
         examTips: ['Use excess ethanolic ammonia to favor primary amine formation in substitution routes.']
     },
     Nitrile: {
-        level: 'A2',
+        level: 'AS',
         topic: 'Nitrogen compounds',
         examTips: ['Nitrile formation extends the carbon chain by one carbon atom.']
     },
@@ -221,22 +221,22 @@ const nodeMetadataById = {
         examTips: ['Cold, dilute permanganate indicates alkene oxidation to vicinal diols.']
     },
     Hydroxynitrile: {
-        level: 'A2',
+        level: 'AS',
         topic: 'Nitrogen compounds',
         examTips: ['Hydroxynitrile formation requires in situ HCN generated safely from cyanide and acid.']
     },
     Polymer: {
-        level: 'A2',
+        level: 'AS',
         topic: 'Polymerisation',
         examTips: ['State monomer and repeat unit when describing polymer formation.']
     },
     PVC: {
-        level: 'A2',
+        level: 'AS',
         topic: 'Polymerisation',
         examTips: ['Include repeat unit brackets and continuation bonds when drawing PVC structures.']
     },
     Chloroalkene: {
-        level: 'A2',
+        level: 'AS',
         topic: 'Polymerisation',
         examTips: ['PVC is formed by addition polymerisation of chloroethene.']
     },
@@ -261,7 +261,7 @@ const nodeMetadataById = {
         examTips: ['Alcohol plus sodium forms alkoxide and hydrogen gas; note the bubbling evidence.']
     },
     Carboxylate: {
-        level: 'A2',
+        level: 'AS',
         topic: 'Carboxylic acids and derivatives',
         examTips: ['Carboxylate salts are ionic and usually more water-soluble than parent acids.']
     },

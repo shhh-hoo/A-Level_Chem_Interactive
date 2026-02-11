@@ -56,6 +56,7 @@ student join or teacher login. The teacher route and teacher-only UI are blocked
 **How to verify**
 - Run `node tests/m1-data-model.test.js`.
 - Run `node tests/m1-syllabus-coverage.test.js`.
+- Run `node tests/m1-chemistry-content.test.js`.
 - Open `/legacy/organic-map.html`, click a node or reaction link, and confirm all four info blocks populate.
 
 ## Project structure (M0 frontend)

@@ -24,17 +24,55 @@ const collectSectionSet = (gData) =>
   new Set([...gData.nodes, ...gData.links].flatMap((item) => item.syllabusSections || []));
 
 const assertLevelCompatibility = (node, label) => {
+  const hasAsSection = node.syllabusSections.some((section) => section <= 22);
+  const hasA2Section = node.syllabusSections.some((section) => section >= 23);
+
+  if (hasAsSection && hasA2Section) {
+    assert.strictEqual(
+      node.level,
+      'AS/A2',
+      `${label} node "${node.id}" must be level AS/A2 when tagged with both AS and A2 sections.`,
+    );
+  }
+
+  if (hasAsSection && !hasA2Section) {
+    assert.strictEqual(
+      node.level,
+      'AS',
+      `${label} node "${node.id}" must be level AS when only AS sections are tagged.`,
+    );
+  }
+
+  if (!hasAsSection && hasA2Section) {
+    assert.strictEqual(
+      node.level,
+      'A2',
+      `${label} node "${node.id}" must be level A2 when only A2 sections are tagged.`,
+    );
+  }
+
   if (node.level === 'AS') {
     assert.ok(
-      node.syllabusSections.some((section) => section <= 22),
+      hasAsSection,
       `${label} AS node "${node.id}" must include at least one AS section tag.`,
     );
   }
 
   if (node.level === 'A2') {
     assert.ok(
-      node.syllabusSections.some((section) => section >= 23),
+      hasA2Section,
       `${label} A2 node "${node.id}" must include at least one A2 section tag.`,
+    );
+  }
+
+  if (node.level === 'AS/A2') {
+    assert.ok(
+      hasAsSection,
+      `${label} AS/A2 node "${node.id}" must include at least one AS section tag.`,
+    );
+    assert.ok(
+      hasA2Section,
+      `${label} AS/A2 node "${node.id}" must include at least one A2 section tag.`,
     );
   }
 };
@@ -66,6 +104,9 @@ const datasets = [
 ];
 
 datasets.forEach(([label, gData]) => {
+  const crossLevelNodes = gData.nodes.filter((node) => node.level === 'AS/A2');
+  assert.ok(crossLevelNodes.length > 0, `${label} should include at least one AS/A2 cross-level node.`);
+
   gData.nodes.forEach((node) => {
     assertLevelCompatibility(node, label);
     assertTopicCoherence(node, label);

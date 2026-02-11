@@ -37,6 +37,8 @@ Important details:
   empty, so broken Pages deployments do not publish with missing backend config.
 - The `build` job now runs in the `github-pages` environment, so API URL secrets
   can be supplied either as repository secrets or `github-pages` environment secrets.
+- The workflow copies `dist/index.html` to `dist/404.html` so direct refreshes on
+  client-side routes (`/student`, `/teacher`) resolve through the SPA on GitHub Pages.
 - The app router uses `basename: import.meta.env.BASE_URL`, so client-side
   routes also resolve correctly under the repo subpath.
 - `vite.config.ts` reads `VITE_BASE_PATH` via Vite `loadEnv` (instead of

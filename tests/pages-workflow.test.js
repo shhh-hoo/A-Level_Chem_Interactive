@@ -43,4 +43,14 @@ assert.ok(
   'Expected Pages workflow validation step to emit an actionable missing-secret error.',
 );
 
+assert.ok(
+  workflow.includes('name: Add SPA fallback page'),
+  'Expected Pages workflow to create a fallback 404.html for client-side route refreshes.',
+);
+
+assert.ok(
+  workflow.includes('cp dist/index.html dist/404.html'),
+  'Expected Pages workflow to copy index.html to 404.html for GitHub Pages SPA fallback.',
+);
+
 console.log('Verified Pages workflow uses deploy-time API URL secrets.');

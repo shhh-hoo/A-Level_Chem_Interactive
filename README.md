@@ -36,16 +36,24 @@ student join or teacher login. The teacher route and teacher-only UI are blocked
 - Run the M0 test suite (see below).
 - Join a class and confirm local storage keys are populated in the browser.
 
-## M1 starter slice — Structured metadata + fixed info blocks
+## M1 metadata completion — Structured metadata + fixed info blocks
 
 **What changed**
 - Legacy reaction-map nodes now include `level`, `topic`, and `examTips`.
 - Legacy reaction-map links now include `conditions`, `mechanismSummary`, `quizData`, and `animationId`.
+- Nodes and links now include explicit `syllabusSections` tags (CIE 9701 section numbers).
 - The legacy side panel includes fixed `What / How / Why / Exam tip` blocks with safe fallbacks.
-- AS core pathways now require authored metadata in tests (fallback metadata is rejected for priority links/nodes).
+- Schema checks now enforce metadata quality across the full map:
+  - Every node must have non-fallback `topic` and at least one `examTip`.
+  - Every link must include `reagents`.
+  - Every non-structural reaction link must include valid `quizData` and `animationId`.
+  - Every node and link must include valid `syllabusSections`.
+  - M1 phase coverage targets are validated for sections `13-22` and `29-37`.
+  - No orphan nodes are allowed.
 
 **How to verify**
 - Run `node tests/m1-data-model.test.js`.
+- Run `node tests/m1-syllabus-coverage.test.js`.
 - Open `/legacy/organic-map.html`, click a node or reaction link, and confirm all four info blocks populate.
 
 ## Project structure (M0 frontend)

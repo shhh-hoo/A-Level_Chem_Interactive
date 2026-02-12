@@ -1,6 +1,6 @@
 const assert = require('assert');
 const srcData = require('../src/js/data');
-const legacyData = require('../public/legacy/js/data');
+const publicData = require('../public/js/data');
 const { readText } = require('./test-utils');
 
 const isNonEmptyString = (value) => typeof value === 'string' && value.trim().length > 0;
@@ -154,7 +154,7 @@ const assertPriorityMetadataCoverage = (gData, label) => {
 
 const datasets = [
   ['src', srcData.gData],
-  ['legacy', legacyData.gData],
+  ['public', publicData.gData],
 ];
 
 datasets.forEach(([label, gData]) => {
@@ -165,19 +165,19 @@ datasets.forEach(([label, gData]) => {
 });
 
 const srcNodeIds = new Set(srcData.gData.nodes.map((node) => node.id));
-const legacyNodeIds = new Set(legacyData.gData.nodes.map((node) => node.id));
+const publicNodeIds = new Set(publicData.gData.nodes.map((node) => node.id));
 assert.deepStrictEqual(
   Array.from(srcNodeIds).sort(),
-  Array.from(legacyNodeIds).sort(),
-  'src and legacy node sets should stay aligned.',
+  Array.from(publicNodeIds).sort(),
+  'src and public node sets should stay aligned.',
 );
 
 const srcLinkKeys = new Set(srcData.gData.links.map((link) => getLinkKey(link)));
-const legacyLinkKeys = new Set(legacyData.gData.links.map((link) => getLinkKey(link)));
+const publicLinkKeys = new Set(publicData.gData.links.map((link) => getLinkKey(link)));
 assert.deepStrictEqual(
   Array.from(srcLinkKeys).sort(),
-  Array.from(legacyLinkKeys).sort(),
-  'src and legacy link sets should stay aligned.',
+  Array.from(publicLinkKeys).sort(),
+  'src and public link sets should stay aligned.',
 );
 
 const reactionLinks = srcData.gData.links.filter((link) => link.type !== STRUCTURE_LINK_TYPE);
@@ -188,11 +188,11 @@ assert.strictEqual(
   'Expected reaction links to use unique animationId values.',
 );
 
-const mapHtml = readText('public/legacy/organic-map.html');
+const mapHtml = readText('public/organic-map.html');
 ['infoWhat', 'infoHow', 'infoWhy', 'infoExamTip'].forEach((id) => {
   assert.ok(
     mapHtml.includes(`id="${id}"`),
-    `Expected legacy map panel block with id "${id}".`,
+    `Expected map panel block with id "${id}".`,
   );
 });
 

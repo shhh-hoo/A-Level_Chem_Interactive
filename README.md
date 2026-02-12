@@ -1,7 +1,7 @@
 # A-Level Chemistry Interactive
 
 Modern React + Vite frontend for the M0 milestone (code-based access, student progress tracking, and teacher insights)
-with legacy organic map assets preserved under `public/legacy/`. The roadmap lives in
+with standalone organic map assets under `public/`. The roadmap lives in
 [`docs/roadmap.md`](docs/roadmap.md) and should guide all M0 feature work.
 
 ## M0 focus (current milestone)
@@ -39,18 +39,18 @@ student join or teacher login. The teacher route and teacher-only UI are blocked
 ## M1 metadata completion — Structured metadata + fixed info blocks
 
 **What changed**
-- Legacy reaction-map nodes now include `level`, `topic`, and `examTips`.
+- Reaction-map nodes now include `level`, `topic`, and `examTips`.
   - `level` may be `AS`, `A2`, or `AS/A2` when a node spans both phase section tags.
-- Legacy reaction-map links now include `conditions`, `mechanismSummary`, `quizData`, and `animationId`.
-- Legacy map data files now expose `window.OrganicMapData` in browser runtime while keeping
+- Reaction-map links now include `conditions`, `mechanismSummary`, `quizData`, and `animationId`.
+- Map data files now expose `window.OrganicMapData` in browser runtime while keeping
   CommonJS exports for Node-based test imports.
-- Legacy map runtime now uses an explicit global script chain (`THREE` + `SpriteText` + `ForceGraph3D`)
+- Map runtime now uses an explicit global script chain (`THREE` + `SpriteText` + `ForceGraph3D`)
   with CDN fallback loading, while map logic remains isolated in `js/main.js`.
-- Legacy map now includes a built-in local 3D canvas fallback renderer when `ForceGraph3D` cannot load
+- Map now includes a built-in local 3D canvas fallback renderer when `ForceGraph3D` cannot load
   (for example, offline mode or blocked CDN access), so the map remains visible and navigable.
 - Nodes and links now include explicit `syllabusSections` tags (CIE 9701 section numbers).
   - Node section tags are authored per node to keep AS/A2 separation intentional.
-- The legacy side panel includes fixed `What / How / Why / Exam tip` blocks with safe fallbacks.
+- The map side panel includes fixed `What / How / Why / Exam tip` blocks with safe fallbacks.
 - Schema checks now enforce metadata quality across the full map:
   - Every node must have non-fallback `topic` and at least one `examTip`.
   - Every link must include `reagents`.
@@ -63,14 +63,16 @@ student join or teacher login. The teacher route and teacher-only UI are blocked
 - Run `node tests/m1-data-model.test.js`.
 - Run `node tests/m1-syllabus-coverage.test.js`.
 - Run `node tests/m1-chemistry-content.test.js`.
-- Open `/legacy/organic-map.html`, click a node or reaction link, and confirm all four info blocks populate.
+- Open `/organic-map.html`, click a node or reaction link, and confirm all four info blocks populate.
 - In browser devtools, confirm `document.querySelector('#mynetwork canvas')` returns an element.
 
 ## Project structure (M0 frontend)
 
 ```
 public/
-  legacy/              # Legacy static site (organic map + assets)
+  organic-map.html     # Standalone organic map entry page
+  js/                  # Standalone map runtime/data scripts
+  css/                 # Standalone map styles
 src/
   app/                 # App shell + router
   api/                 # API client placeholders (M0)
@@ -102,9 +104,8 @@ The activity detail panel now includes structured M1 blocks: `What`, `How`, `Why
 After a successful teacher login, the app shows a dashboard with stats, leaderboard, activity
 distribution, search, and CSV export.
 
-Legacy organic map assets remain available at `/legacy/` (for example,
-`http://localhost:5173/legacy/organic-map.html`).
-The main app now exposes this map directly at `/map`.
+Standalone organic map assets remain available at `http://localhost:5173/organic-map.html`.
+The main app embeds this map directly at `/map`.
 
 Run the full local verification checks (including build + edge tests) before pushing:
 
@@ -236,4 +237,4 @@ curl "${SUPABASE_URL}/functions/v1/teacher/report?class_code=CHEM101&teacher_cod
 
 - **Frontend flows (T1):** `src/pages/`, `src/components/`, `src/app/`.
 - **API client & validation (T1/T3):** `src/api/`, `src/validators/`.
-- **Legacy content:** `public/legacy/` (read-only unless you are updating legacy assets).
+- **Map static assets:** `public/organic-map.html`, `public/js/`, `public/css/`.

@@ -2,7 +2,7 @@ const assert = require('assert');
 const { readText } = require('./test-utils');
 
 const srcDataFile = readText('src/js/data.js');
-const legacyDataFile = readText('public/legacy/js/data.js');
+const publicDataFile = readText('public/js/data.js');
 
 const assertGlobalAssignment = (label, contents) => {
   assert.ok(
@@ -20,6 +20,6 @@ const assertGlobalAssignment = (label, contents) => {
 };
 
 assertGlobalAssignment('src', srcDataFile);
-assertGlobalAssignment('legacy', legacyDataFile);
+assertGlobalAssignment('public', publicDataFile);
 
-console.log('Verified legacy data files expose OrganicMapData in both browser and Node runtimes.');
+console.log('Verified map data files expose OrganicMapData in both browser and Node runtimes.');

@@ -2,7 +2,7 @@ const assert = require('assert');
 const { readText } = require('./test-utils');
 
 const srcMain = readText('src/js/main.js');
-const legacyMain = readText('public/legacy/js/main.js');
+const publicMain = readText('public/js/main.js');
 
 const assertBootstrapGuards = (label, contents) => {
   assert.ok(
@@ -78,12 +78,12 @@ const assertBootstrapGuards = (label, contents) => {
     `${label} main.js should retry map initialization on window load as a fallback.`,
   );
   assert.ok(
-    contents.includes('window.__legacyMapScriptLoaded'),
+    contents.includes('window.__organicMapScriptLoaded'),
     `${label} main.js should guard against duplicate script execution in the same page.`,
   );
 };
 
 assertBootstrapGuards('src', srcMain);
-assertBootstrapGuards('legacy', legacyMain);
+assertBootstrapGuards('public', publicMain);
 
-console.log('Verified legacy map bootstrap guards and explicit sizing.');
+console.log('Verified map bootstrap guards and explicit sizing.');

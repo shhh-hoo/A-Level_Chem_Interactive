@@ -151,7 +151,7 @@
                 return;
             }
 
-            console.error('Legacy map bootstrap failed: js/main.js did not expose initMap.');
+            console.error('Map bootstrap failed: js/main.js did not expose initMap.');
             const contentArea = document.getElementById('contentArea');
             if (contentArea) {
                 contentArea.innerHTML = `

@@ -1,14 +1,14 @@
 // Wrap in an IIFE so duplicate script execution (for example due to browser/tooling
 // quirks) doesn't redeclare top-level bindings and break map startup.
-(function legacyMapBootstrap() {
+(function organicMapBootstrap() {
 if (typeof window !== 'undefined') {
-    if (window.__legacyMapScriptLoaded) {
+    if (window.__organicMapScriptLoaded) {
         if (typeof window.initMap === 'function') {
             window.initMap();
         }
         return;
     }
-    window.__legacyMapScriptLoaded = true;
+    window.__organicMapScriptLoaded = true;
 }
 
 // --- Data Definition ---

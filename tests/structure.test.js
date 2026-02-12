@@ -10,11 +10,12 @@ const {
 // This test verifies critical files, dependencies, and route wiring so
 // project structure changes don't accidentally break the app shell.
 
-// Files that must exist for the UI to render and the legacy map to stay reachable.
+// Files that must exist for the UI to render and the map surface to stay reachable.
 const requiredFiles = [
-  'public/legacy/index.html',
-  'public/legacy/organic-map.html',
-  'public/legacy/js/data.js',
+  'public/organic-map.html',
+  'public/js/data.js',
+  'public/js/main.js',
+  'public/css/styles.css',
   'src/app/router.tsx',
   'src/pages/Map.tsx',
   'src/pages/Student.tsx',
@@ -89,7 +90,7 @@ assertIncludesAll(appContents, ['to="/student"', 'to="/teacher"', 'to="/map"'], 
 const mapPageContents = readText('src/pages/Map.tsx');
 assertIncludesAll(
   mapPageContents,
-  ['iframe', 'legacy/organic-map.html'],
+  ['iframe', 'organic-map.html'],
   'Map page embed wiring'
 );
 
@@ -104,18 +105,6 @@ assertIncludesAll(
 const roleGuardContents = readText('src/app/RoleGuard.tsx');
 assertIncludesAll(roleGuardContents, ['useRole', 'blockedRoles'], 'Role guard wiring');
 
-// Legacy index should preserve branding and link to the organic map page.
-const legacyIndex = readText('public/legacy/index.html');
-
-assert.ok(
-  legacyIndex.includes('A-Level Chemistry Interactive'),
-  'Expected legacy index to preserve the title.'
-);
-assert.ok(
-  legacyIndex.includes('organic-map.html'),
-  'Expected legacy index to link to organic map.'
-);
-
 // Edge functions should remain present to support M0 auth + progress sync.
 ['supabase/functions/join', 'supabase/functions/load', 'supabase/functions/save', 'supabase/functions/teacher']
   .forEach((relativePath) => {
@@ -123,4 +112,4 @@ assert.ok(
     assertFileExists(`${relativePath}/index.ts`);
   });
 
-console.log('Verified required files, dependencies, routes, and legacy assets.');
+console.log('Verified required files, dependencies, routes, and map assets.');

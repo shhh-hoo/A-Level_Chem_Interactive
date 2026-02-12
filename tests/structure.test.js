@@ -16,6 +16,7 @@ const requiredFiles = [
   'public/legacy/organic-map.html',
   'public/legacy/js/data.js',
   'src/app/router.tsx',
+  'src/pages/Map.tsx',
   'src/pages/Student.tsx',
   'src/pages/Teacher.tsx',
   'src/components/JoinForm.tsx',
@@ -54,10 +55,15 @@ assert.ok(
 
 // Route definitions must include the student/teacher entry points.
 const routerContents = readText('src/app/router.tsx');
-assertIncludesAll(routerContents, ["path: 'student'", "path: 'teacher'"], 'router');
+assertIncludesAll(routerContents, ["path: 'student'", "path: 'teacher'", "path: 'map'"], 'router');
 assertIncludesAll(
   routerContents,
-  ['basename: import.meta.env.BASE_URL'],
+  ["path: '*'", '<Navigate to="/student" replace />'],
+  'router wildcard fallback',
+);
+assertIncludesAll(
+  routerContents,
+  ['basename: import.meta.env.BASE_URL', 'errorElement: <RouteError />'],
   'router basename for subpath deploys'
 );
 
@@ -78,7 +84,14 @@ assertIncludesAll(
 
 // App layout should include navigation links to key routes.
 const appContents = readText('src/app/App.tsx');
-assertIncludesAll(appContents, ['to="/student"', 'to="/teacher"'], 'App layout');
+assertIncludesAll(appContents, ['to="/student"', 'to="/teacher"', 'to="/map"'], 'App layout');
+
+const mapPageContents = readText('src/pages/Map.tsx');
+assertIncludesAll(
+  mapPageContents,
+  ['iframe', 'legacy/organic-map.html'],
+  'Map page embed wiring'
+);
 
 // Session persistence should exist in the client and be wired into route gating.
 const roleStoreContents = readText('src/app/roleStore.ts');

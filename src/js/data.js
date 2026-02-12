@@ -657,8 +657,12 @@ const buildFallbackLinkMetadata = (link) => {
 };
 
 const buildLinkSyllabusSections = ({ link, metadata, nodesById }) => {
-    const sourceSections = nodesById.get(link.source)?.syllabusSections || [];
-    const targetSections = nodesById.get(link.target)?.syllabusSections || [];
+    const sourceNode = nodesById.get(link.source);
+    const targetNode = nodesById.get(link.target);
+    const sourceSections =
+        sourceNode && Array.isArray(sourceNode.syllabusSections) ? sourceNode.syllabusSections : [];
+    const targetSections =
+        targetNode && Array.isArray(targetNode.syllabusSections) ? targetNode.syllabusSections : [];
     const sections = [
         ...(Array.isArray(metadata.syllabusSections) ? metadata.syllabusSections : []),
         ...sourceSections,
@@ -729,8 +733,10 @@ const organicMapData = {
     compoundDescriptions
 };
 
+if (typeof window !== 'undefined') {
+    window.OrganicMapData = organicMapData;
+}
+
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = organicMapData;
-} else {
-    window.OrganicMapData = organicMapData;
 }

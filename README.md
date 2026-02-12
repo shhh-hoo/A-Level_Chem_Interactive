@@ -42,6 +42,12 @@ student join or teacher login. The teacher route and teacher-only UI are blocked
 - Legacy reaction-map nodes now include `level`, `topic`, and `examTips`.
   - `level` may be `AS`, `A2`, or `AS/A2` when a node spans both phase section tags.
 - Legacy reaction-map links now include `conditions`, `mechanismSummary`, `quizData`, and `animationId`.
+- Legacy map data files now expose `window.OrganicMapData` in browser runtime while keeping
+  CommonJS exports for Node-based test imports.
+- Legacy map runtime now uses an explicit global script chain (`THREE` + `SpriteText` + `ForceGraph3D`)
+  with CDN fallback loading, while map logic remains isolated in `js/main.js`.
+- Legacy map now includes a built-in local 3D canvas fallback renderer when `ForceGraph3D` cannot load
+  (for example, offline mode or blocked CDN access), so the map remains visible and navigable.
 - Nodes and links now include explicit `syllabusSections` tags (CIE 9701 section numbers).
   - Node section tags are authored per node to keep AS/A2 separation intentional.
 - The legacy side panel includes fixed `What / How / Why / Exam tip` blocks with safe fallbacks.
@@ -58,6 +64,7 @@ student join or teacher login. The teacher route and teacher-only UI are blocked
 - Run `node tests/m1-syllabus-coverage.test.js`.
 - Run `node tests/m1-chemistry-content.test.js`.
 - Open `/legacy/organic-map.html`, click a node or reaction link, and confirm all four info blocks populate.
+- In browser devtools, confirm `document.querySelector('#mynetwork canvas')` returns an element.
 
 ## Project structure (M0 frontend)
 
@@ -86,6 +93,7 @@ npm run dev
 Then open:
 
 - `http://localhost:5173/student` for the student join flow.
+- `http://localhost:5173/map` for the integrated reaction map route.
 - `http://localhost:5173/teacher` for the teacher login flow.
 
 After a successful student join, the app shows the Student MVP dashboard with mock activities,
@@ -96,6 +104,7 @@ distribution, search, and CSV export.
 
 Legacy organic map assets remain available at `/legacy/` (for example,
 `http://localhost:5173/legacy/organic-map.html`).
+The main app now exposes this map directly at `/map`.
 
 Run the full local verification checks (including build + edge tests) before pushing:
 

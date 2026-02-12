@@ -1,6 +1,6 @@
 const assert = require('assert');
 const srcData = require('../src/js/data');
-const legacyData = require('../public/legacy/js/data');
+const publicData = require('../public/js/data');
 
 const SUBSCRIPT_MAP = {
   '₀': '0',
@@ -69,6 +69,6 @@ const assertChemistryContent = (label, gData) => {
 };
 
 assertChemistryContent('src', srcData.gData);
-assertChemistryContent('legacy', legacyData.gData);
+assertChemistryContent('public', publicData.gData);
 
 console.log('Verified chemistry-content accuracy for key M1 pathways.');

@@ -1,6 +1,6 @@
 const assert = require('assert');
 const srcData = require('../src/js/data');
-const legacyData = require('../public/legacy/js/data');
+const publicData = require('../public/js/data');
 
 const M1_AS_TARGET_SECTIONS = [13, 14, 15, 16, 17, 18, 19, 20, 21, 22];
 const M1_A2_TARGET_SECTIONS = [29, 30, 31, 32, 33, 34, 35, 36, 37];
@@ -100,7 +100,7 @@ const assertCoverageTargets = (gData, label) => {
 
 const datasets = [
   ['src', srcData.gData],
-  ['legacy', legacyData.gData],
+  ['public', publicData.gData],
 ];
 
 datasets.forEach(([label, gData]) => {
@@ -123,11 +123,11 @@ datasets.forEach(([label, gData]) => {
 });
 
 const srcSectionSet = collectSectionSet(srcData.gData);
-const legacySectionSet = collectSectionSet(legacyData.gData);
+const publicSectionSet = collectSectionSet(publicData.gData);
 assert.deepStrictEqual(
   Array.from(srcSectionSet).sort((a, b) => a - b),
-  Array.from(legacySectionSet).sort((a, b) => a - b),
-  'Expected src and legacy datasets to expose the same syllabus section coverage.',
+  Array.from(publicSectionSet).sort((a, b) => a - b),
+  'Expected src and public datasets to expose the same syllabus section coverage.',
 );
 
 console.log('Verified M1 syllabus tagging and section coverage targets.');

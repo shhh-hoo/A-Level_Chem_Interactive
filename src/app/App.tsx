@@ -20,6 +20,9 @@ export function App() {
             <NavLink to="/student" className={linkClasses}>
               Student
             </NavLink>
+            <NavLink to="/map" className={linkClasses}>
+              Map
+            </NavLink>
             <RoleGate blockedRoles={['student']}>
               <NavLink to="/teacher" className={linkClasses}>
                 Teacher
